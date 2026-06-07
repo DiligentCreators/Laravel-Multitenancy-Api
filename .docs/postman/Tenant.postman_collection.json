@@ -1,7 +1,7 @@
 {
   "info": {
-    "_postman_id": "4208141d-6e1d-4f3d-9218-dd39858e10eb",
-    "name": "Central",
+    "_postman_id": "0e2a501d-9712-4df8-89e3-d98c929a03a5",
+    "name": "Tenant",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "21533029"
   },
@@ -38,7 +38,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"superadmin@shaz3e.com\",\r\n    \"password\": \"password\"\r\n}",
+              "raw": "{\r\n    \"email\": \"tenant1@shaz3e.com\",\r\n    \"password\": \"password\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -86,7 +86,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"superadmin@shaz3e.com\"\r\n}",
+              "raw": "{\r\n    \"email\": \"tenant1@shaz3e.com\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -134,7 +134,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"superadmin@shaz3e.com\",\r\n    \"token\": \"e76fb9ca525563233f361bbff67fdabf466980c28f45fef9c1e1ed166d57d2ef\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\"\r\n}",
+              "raw": "{\r\n    \"email\": \"tenant1@shaz3e.com\",\r\n    \"token\": \"e76fb9ca525563233f361bbff67fdabf466980c28f45fef9c1e1ed166d57d2ef\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
