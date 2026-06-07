@@ -2,8 +2,8 @@
 
 namespace Database\Seeders\Central;
 
+use App\Models\CentralUser;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class CentralUserSeeder extends Seeder
 {
@@ -13,11 +13,46 @@ class CentralUserSeeder extends Seeder
     public function run(): void
     {
         $users = [
-            'name' => 'Admin',
-            'email' => 'admin@email.com',
-            'password' => bcrypt('password'),
+            [
+                'name' => 'superadmin',
+                'email' => 'superadmin@shaz3e.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+            ],
+            [
+                'name' => 'tester',
+                'email' => 'tester@shaz3e.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+            ],
+            [
+                'name' => 'developer',
+                'email' => 'developer@shaz3e.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+            ],
+            [
+                'name' => 'admin',
+                'email' => 'admin@shaz3e.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+            ],
+            [
+                'name' => 'manager',
+                'email' => 'manager@shaz3e.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+            ],
+            [
+                'name' => 'staff',
+                'email' => 'staff@shaz3e.com',
+                'email_verified_at' => now(),
+                'password' => bcrypt('password'),
+            ],
         ];
 
-        DB::table('central_users')->insert($users);
+        foreach ($users as $user) {
+            CentralUser::create($user);
+        }
     }
 }

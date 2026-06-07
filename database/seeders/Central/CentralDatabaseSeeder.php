@@ -13,6 +13,18 @@ class CentralDatabaseSeeder extends Seeder
     {
         $this->call([
             CentralUserSeeder::class,
+
+            // Create Permissions
+            PermissionsSeeder::class,
+
+            // Create Roles
+            RoleSeeder::class,
+
+            // Assign Role to User
+            AssignRoleToUserSeeder::class,
+
+            // Sync Roles & Permissions
+            RolePermissionSeeder::class,
         ]);
     }
 }
