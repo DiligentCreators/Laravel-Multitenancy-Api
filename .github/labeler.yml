@@ -1,0 +1,32 @@
+backend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'app/**'
+          - 'routes/**'
+          - 'config/**'
+
+migrations:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'database/migrations/**'
+
+tests:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'tests/**'
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+
+blade:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'resources/views/**/*.blade.php'
+
+composer:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'composer.json'
+          - 'composer.lock'

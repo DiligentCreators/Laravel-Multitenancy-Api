@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+echo "Detecting changed PHP files..."
+
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.php$' || true)
+
+if [ -z "$FILES" ]; then
+  echo "No PHP files changed. Skipping Pint & Larastan."
+  exit 0
+fi
+
+echo "Running Pint (auto-fix on changed files)..."
+vendor/bin/pint $FILES
+
+echo "Re-staging files after Pint..."
+git add $FILES
+
+echo "Running Larastan (full analysis)..."
+vendor/bin/phpstan analyse --memory-limit=2G

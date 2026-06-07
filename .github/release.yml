@@ -1,0 +1,20 @@
+name: Build Release Changelog
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-changelog:
+    name: Generate Release Changelog
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub Release Changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          configuration: '.github/changelog-config.json'
+          token: ${{ secrets.GITHUB_TOKEN }}

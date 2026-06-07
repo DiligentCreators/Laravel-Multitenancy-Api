@@ -1,0 +1,69 @@
+name: Code Quality Gate
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  quality-gate:
+    name: Quality Gate (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.4]
+
+    env:
+      APP_ENV: testing
+      APP_DEBUG: false
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ":memory:"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          ini-values: memory_limit=2G
+          coverage: none
+
+      - name: Validate Composer
+        run: composer validate --strict
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php }}-
+
+      - name: Install Dependencies
+        run: |
+          composer install \
+            --prefer-dist \
+            --no-progress \
+            --no-interaction \
+            --optimize-autoloader \
+            --classmap-authoritative
+
+      - name: Laravel Pint (strict)
+        run: ./vendor/bin/pint --parallel --test
+
+      - name: Larastan (strict)
+        run: |
+          ./vendor/bin/phpstan analyse \
+            --configuration=phpstan.neon \
+            --no-interaction \
+            --memory-limit=2G
+
+      - name: Ensure no dirty files
+        run: git diff --exit-code

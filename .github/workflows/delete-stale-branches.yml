@@ -1,0 +1,43 @@
+name: Delete Stale Branches
+
+on:
+  schedule:
+    - cron: '0 3 * * 0' # Every Sunday at 3AM
+  workflow_dispatch:
+
+jobs:
+  delete-stale:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete branches older than 30 days
+        id: deleter
+        uses: phpdocker-io/github-actions-delete-old-branches@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          exclude: main,develop
+          days: 30
+
+      - name: Prepare deleted branches message
+        id: message
+        run: |
+          echo "Deleted branches list:"
+          echo "${{ steps.deleter.outputs.deleted }}" | tr ',' '\n' | sed 's/^/- /' > deleted.txt
+
+          if [ ! -s deleted.txt ]; then
+            echo "No branches deleted." > deleted.txt
+          fi
+
+          echo "DELETED_BRANCHES<<EOF" >> $GITHUB_ENV
+          cat deleted.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": ":broom: *Stale Branch Cleanup*\n\n• *Repository:* `${{ github.repository }}`\n• *Deleted Branches:* \n```\n${{ env.DELETED_BRANCHES }}\n```\n• *Triggered by:* Scheduled or Manual"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

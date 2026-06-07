@@ -1,0 +1,32 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+
+    level: 5
+
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+
+    excludePaths:
+        - vendor/*
+
+    tmpDir: storage/framework/cache/phpstan
+
+    checkOctaneCompatibility: false
+    noEnvCallsOutsideOfConfig: true
+    noModelMake: true
+
+    databaseMigrationsPath:
+        - database/migrations
+        - database/migrations/central
+
+    typeAliases:
+        class-string: string
+
+    treatPhpDocTypesAsCertain: false
+
+    ignoreErrors: []

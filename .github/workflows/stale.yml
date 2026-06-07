@@ -1,0 +1,43 @@
+name: Close Stale Issues and PRs
+
+on:
+  schedule:
+    - cron: '0 2 * * 0' # Every Sunday at 2AM
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/stale@v9
+        id: stale
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: |
+            ⚠️ This issue has been marked as stale due to inactivity. It will be closed in 7 days if no further activity occurs.
+          stale-pr-message: |
+            ⚠️ This PR has been marked as stale due to inactivity. It will be closed in 7 days if no further activity occurs.
+          close-issue-message: |
+            ❌ Closing this issue due to prolonged inactivity. Please reopen if needed.
+          close-pr-message: |
+            ❌ Closing this pull request due to inactivity. Please reopen if needed.
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: stale
+          stale-pr-label: stale
+          exempt-issue-labels: keep-open
+          exempt-pr-labels: keep-open
+
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": ":zzz: *Stale Issues & PRs Cleanup*\n\n• *Repository:* `${{ github.repository }}`\n• Issues and PRs marked/closed as stale. Please check the repo for details.\n• Triggered by: Scheduled Cleanup"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

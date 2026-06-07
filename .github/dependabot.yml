@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # PHP dependencies
+  - package-ecosystem: 'composer'
+    directory: '/' # Composer file is in root
+    schedule:
+      interval: 'daily'
+      time: '08:00'
+      timezone: 'Asia/Karachi'
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+      - 'php'
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    security-updates-only: true
+
+  # JavaScript (Node.js) dependencies
+  - package-ecosystem: 'npm'
+    directory: '/' # package.json in root
+    schedule:
+      interval: 'daily'
+      time: '08:00'
+      timezone: 'Asia/Karachi'
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+      - 'js'
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    security-updates-only: true
+
+  # GitHub Actions
+  - package-ecosystem: 'github-actions'
+    directory: '/' # workflows in .github/workflows
+    schedule:
+      interval: 'weekly'
+      time: '08:00'
+      timezone: 'Asia/Karachi'
+    open-pull-requests-limit: 3
+    labels:
+      - 'dependencies'
+      - 'github-actions'
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    security-updates-only: true

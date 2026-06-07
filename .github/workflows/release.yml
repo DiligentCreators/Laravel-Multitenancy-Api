@@ -1,0 +1,51 @@
+name: Build Release Changelog
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  changelog:
+    name: Generate & Post Release Changelog
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Generate Changelog Content
+        id: changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          configuration: '.github/changelog-config.json'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ✍️ Update CHANGELOG.md file
+      - name: Update CHANGELOG.md
+        run: |
+          echo "${{ steps.changelog.outputs.changelog }}" > TEMP_CHANGELOG.md
+
+          if test -f CHANGELOG.md; then
+            echo -e "${{ steps.changelog.outputs.changelog }}\n\n$(cat CHANGELOG.md)" > CHANGELOG.md
+          else
+            mv TEMP_CHANGELOG.md CHANGELOG.md
+          fi
+
+      - name: Commit updated CHANGELOG.md
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG for ${{ github.event.release.tag_name }}"
+          git push origin HEAD:${{ github.ref_name }}
+
+      # 🔔 Notify Slack
+      - name: Notify Slack with changelog
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": ":rocket: *New Release Published: `${{ github.event.release.tag_name }}`*\n\n*Repository:* `${{ github.repository }}`\n\n*Changelog:*\n```\n${{ steps.changelog.outputs.changelog }}\n```"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
