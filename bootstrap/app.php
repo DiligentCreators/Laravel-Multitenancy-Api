@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\EnsureCentralDomain;
+use App\Http\Middleware\InitializeTenancy;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,10 +17,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Ability middlewars
+        // Sanctum ability middleware
         $middleware->alias([
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
+
+            // Central domain guard — blocks tenant-domain access
+            'central.domain' => EnsureCentralDomain::class,
+
+            // Flexible tenant resolution (domain → header → input)
+            'tenancy' => InitializeTenancy::class,
         ]);
 
         // SPA

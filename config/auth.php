@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CentralUser;
 use App\Models\User;
 
 return [
@@ -25,21 +26,39 @@ return [
     | Authentication Guards
     |--------------------------------------------------------------------------
     |
-    | Next, you may define every authentication guard for your application.
-    | Of course, a great default configuration has been defined for you
-    | which utilizes session storage plus the Eloquent user provider.
+    | Three guards are defined:
     |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
+    |   web         — Session-based, for admin panel / Filament (if used)
+    |   central-api — Sanctum-based, for central platform APIs
+    |   tenant-api  — Sanctum-based, for tenant-scoped APIs
     |
-    | Supported: "session"
+    | Central-api and tenant-api use different providers so their user
+    | models and tables are completely isolated. A central token can
+    | never authenticate a tenant user, and vice versa.
     |
     */
 
     'guards' => [
         'web' => [
             'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        /*
+         * Central API guard — authenticates CentralUser (central_users table).
+         * Used on central routes: Route::middleware('auth:central-api')
+         */
+        'central-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'central_users',
+        ],
+
+        /*
+         * Tenant API guard — authenticates User (users table, tenant-scoped).
+         * Used on tenant routes: Route::middleware('auth:tenant-api')
+         */
+        'tenant-api' => [
+            'driver' => 'sanctum',
             'provider' => 'users',
         ],
     ],
@@ -49,28 +68,24 @@ return [
     | User Providers
     |--------------------------------------------------------------------------
     |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
+    | Two providers separate central platform users from tenant users.
+    | They use different models and different database tables.
     |
-    | If you have multiple user tables or models you may configure multiple
-    | providers to represent the model / table. These providers may then
-    | be assigned to any extra authentication guards you have defined.
-    |
-    | Supported: "database", "eloquent"
+    |   central_users → App\Models\CentralUser → central_users table
+    |   users         → App\Models\User         → users table
     |
     */
 
     'providers' => [
+        'central_users' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL_CENTRAL', CentralUser::class),
+        ],
+
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*
@@ -93,6 +108,13 @@ return [
     */
 
     'passwords' => [
+        'central_users' => [
+            'provider' => 'central_users',
+            'table' => env('CENTRAL_PASSWORD_RESET_TOKEN_TABLE', 'central_password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),

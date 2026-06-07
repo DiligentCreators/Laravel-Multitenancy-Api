@@ -37,6 +37,13 @@ return [
     |
     */
 
+    /*
+     * List of guards Sanctum checks during authentication. The order matters —
+     * Sanctum tries each guard in sequence. For an API-only multitenancy app,
+     * include both central-api and tenant-api so Sanctum knows which guard to
+     * resolve permissions against.
+     */
+    // 'guard' => ['web', 'central-api', 'tenant-api'],
     'guard' => ['web'],
 
     /*

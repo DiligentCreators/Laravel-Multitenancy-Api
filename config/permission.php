@@ -6,6 +6,49 @@ use Spatie\Permission\DefaultTeamResolver;
 
 return [
 
+    /*
+     |--------------------------------------------------------------------------
+     | Central vs Tenant Permission Isolation Strategy (Single Database)
+     |--------------------------------------------------------------------------
+     |
+     | Since this application uses a single database, all roles and permissions
+     | live in the same tables. Separation is achieved via Spatie's guard_name
+     | column and the model_type polymorphic column on pivot tables.
+     |
+     |   Central roles:   guard_name = 'central-api'
+     |   Tenant roles:    guard_name = 'tenant-api'
+     |   CentralUser → model_has_roles.model_type = 'App\Models\CentralUser'
+     |   User        → model_has_roles.model_type = 'App\Models\User'
+     |
+     | When creating a role:
+     |   Role::create(['name' => 'Super Admin', 'guard_name' => 'central-api'])
+     |   Role::create(['name' => 'Owner', 'guard_name' => 'tenant-api'])
+     |
+     | Spatie's unique constraint (name + guard_name) allows the same name
+     | to exist in both contexts (e.g., "Manager" in central and "Manager"
+     | in tenant) without collision.
+     |
+     | Permission checks are guard-aware. When a request uses auth:central-api,
+     | Spatie only considers roles/permissions with guard_name = 'central-api'.
+     |
+     | To create and assign:
+     |   $permission = Permission::create(['name' => 'tenant.view', 'guard_name' => 'central-api']);
+     |   $role = Role::create(['name' => 'Super Admin', 'guard_name' => 'central-api']);
+     |   $role->givePermissionTo($permission);
+     |   $centralUser->assignRole($role);
+     |
+     | For tenant:
+     |   $permission = Permission::create(['name' => 'contacts.create', 'guard_name' => 'tenant-api']);
+     |   $role = Role::create(['name' => 'Owner', 'guard_name' => 'tenant-api']);
+     |   $role->givePermissionTo($permission);
+     |   $tenantUser->assignRole($role);
+     |
+     | This provides complete, automatic isolation without any prefixing or
+     | separate table sets. The two ecosystems are self-contained.
+     |
+     |--------------------------------------------------------------------------
+     */
+
     'models' => [
 
         /*
