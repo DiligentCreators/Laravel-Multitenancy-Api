@@ -1,0 +1,85 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use App\Http\Controllers\Controller;
+use App\Models\{{ context }}\{{ model }};
+use App\Http\Requests\{{ context }}\Api\{{ version }}{{ pathSegment }}\Store{{ model }}Request;
+use App\Http\Requests\{{ context }}\Api\{{ version }}{{ pathSegment }}\Update{{ model }}Request;
+use App\Http\Resources\{{ context }}{{ pathSegment }}\{{ model }}Resource;
+use App\Http\Resources\{{ context }}{{ pathSegment }}\List{{ model }}Resource;
+use Illuminate\Http\JsonResponse;
+
+class {{ class }} extends Controller
+{
+    public function index(): JsonResponse
+    {
+        return $this->api->success(
+            __('crud.index', ['resource' => '{{ model }}']),
+            List{{ model }}Resource::collection({{ model }}::paginate()),
+        );
+    }
+
+    public function store(Store{{ model }}Request $request): JsonResponse
+    {
+        ${{ modelVariable }} = {{ model }}::create($request->validated());
+
+        return $this->api->success(
+            __('crud.store', ['resource' => '{{ model }}']),
+            new {{ model }}Resource(${{ modelVariable }}),
+            201,
+        );
+    }
+
+    public function show({{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        return $this->api->success(
+            __('crud.show', ['resource' => '{{ model }}']),
+            new {{ model }}Resource(${{ modelVariable }}),
+        );
+    }
+
+    public function update(Update{{ model }}Request $request, {{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        ${{ modelVariable }}->update($request->validated());
+
+        return $this->api->success(
+            __('crud.update', ['resource' => '{{ model }}']),
+            new {{ model }}Resource(${{ modelVariable }}),
+        );
+    }
+
+    public function destroy({{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        ${{ modelVariable }}->delete();
+
+        return $this->api->success(
+            __('crud.destroy', ['resource' => '{{ model }}']),
+            null,
+            204,
+        );
+    }
+
+    public function restore({{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        ${{ modelVariable }}->restore();
+
+        return $this->api->success(
+            __('crud.restore', ['resource' => '{{ model }}']),
+            new {{ model }}Resource(${{ modelVariable }}),
+        );
+    }
+
+    public function forceDelete({{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        ${{ modelVariable }}->forceDelete();
+
+        return $this->api->success(
+            __('crud.force_delete', ['resource' => '{{ model }}']),
+            null,
+            204,
+        );
+    }
+}

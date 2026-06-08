@@ -1,0 +1,77 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ userModelNamespace }};
+use App\Models\{{ context }}\{{ model }};
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class {{ class }}
+{
+    use HandlesAuthorization;
+
+    public function viewAny({{ userModel }} ${{ userModelVariable }}): bool
+    {
+        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.list')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function view({{ userModel }} ${{ userModelVariable }}, {{ model }} ${{ modelVariable }}): bool
+    {
+        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.read')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function create({{ userModel }} ${{ userModelVariable }}): bool
+    {
+        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.create')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function update({{ userModel }} ${{ userModelVariable }}, {{ model }} ${{ modelVariable }}): bool
+    {
+        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.update')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function delete({{ userModel }} ${{ userModelVariable }}, {{ model }} ${{ modelVariable }}): bool
+    {
+        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.delete')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function restore({{ userModel }} ${{ userModelVariable }}, {{ model }} ${{ modelVariable }}): bool
+    {
+        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.restore')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function forceDelete({{ userModel }} ${{ userModelVariable }}, {{ model }} ${{ modelVariable }}): bool
+    {
+        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.force-delete')) {
+            return true;
+        }
+
+        return false;
+    }
+}

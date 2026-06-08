@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Central\Api\V1\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Central\Api\V1\Auth\LoginRequest;
-use App\Http\Resources\Central\Auth\LoginResource;
+use App\Http\Resources\Central\Api\V1\Auth\LoginResource;
 use App\Models\CentralUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;

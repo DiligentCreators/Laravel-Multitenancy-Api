@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Model;{{ observedByImport }}{{ usePolicyImport }}{{ observerImport }}{{ policyImport }}{{ tenantTraitImport }}
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+{{ observedByAttribute }}{{ usePolicyAttribute }}class {{ class }} extends Model
+{
+    {{ tenantTraitUsage }}
+    use SoftDeletes;
+    protected $fillable = [
+        //
+    ];
+
+    protected function casts(): array
+    {
+        return [];
+    }
+}

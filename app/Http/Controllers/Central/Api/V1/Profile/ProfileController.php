@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Central\Api\V1\Profile;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Central\Profile\ChangePasswordRequest;
-use App\Http\Requests\Central\Profile\UpdateProfileRequest;
-use App\Http\Resources\Central\Profile\ProfileResource;
+use App\Http\Requests\Central\Api\V1\Profile\ChangePasswordRequest;
+use App\Http\Requests\Central\Api\V1\Profile\UpdateProfileRequest;
+use App\Http\Resources\Central\Api\V1\Profile\ProfileResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
