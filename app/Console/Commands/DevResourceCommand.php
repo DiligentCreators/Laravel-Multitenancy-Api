@@ -24,8 +24,6 @@ use function Laravel\Prompts\text;
 
 class DevResourceCommand extends Command
 {
-    private const string STUBS_DIR = 'stubs/dev-resource';
-
     protected $signature = '
         dev:resource
         {name? : The resource class name (e.g., User)}
