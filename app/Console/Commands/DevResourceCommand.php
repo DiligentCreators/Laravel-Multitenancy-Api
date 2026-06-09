@@ -78,12 +78,12 @@ class DevResourceCommand extends Command
         if ($interactive) {
             $name = text(
                 label: 'Resource Name',
-                placeholder: 'TradingAccount',
+                placeholder: 'YourModelName',
                 default: $name ?? '',
                 required: true,
                 validate: fn (string $value) => preg_match('/^[A-Z][a-zA-Z0-9]+$/', $value)
                     ? null
-                    : 'The resource name must be a valid class name (e.g., TradingAccount).',
+                    : 'The resource name must be a valid class name (e.g., YourModelName).',
                 transform: fn (string $value) => trim($value),
             );
 
@@ -103,12 +103,12 @@ class DevResourceCommand extends Command
 
             $path = text(
                 label: 'Module Path',
-                placeholder: 'Trading',
+                placeholder: 'YourModelName',
                 default: $path,
                 hint: 'Optional subdirectory within the version namespace',
                 validate: fn (string $value) => $value === '' || preg_match('/^[A-Z][a-zA-Z0-9]*$/', $value)
                     ? null
-                    : 'The module path must be a valid namespace segment (e.g., Trading).',
+                    : 'The module path must be a valid namespace segment (e.g., YourModelName).',
                 transform: fn (string $value) => trim($value),
             );
         }
