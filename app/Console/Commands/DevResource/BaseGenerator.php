@@ -46,7 +46,7 @@ abstract class BaseGenerator implements ResourceGenerator
             'model' => $model,
             'modelVariable' => lcfirst($model),
             'modelPlural' => lcfirst(Str::plural($model)),
-            'modelNamespace' => sprintf('App\\Models\\%s\\%s', $contextStudly, $model),
+            'modelNamespace' => sprintf('App\\Models\\%s', $model),
             'table' => $table,
             'qualifiedTable' => sprintf('%s_%s', $contextLower, $table),
             'userModel' => $contextLower === 'central' ? 'CentralUser' : 'User',

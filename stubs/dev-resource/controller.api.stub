@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use App\Http\Controllers\Controller;
-use App\Models\{{ context }}\{{ model }};
+use App\Models\{{ model }};
 use App\Http\Requests\{{ context }}\Api\{{ version }}{{ pathSegment }}\Store{{ model }}Request;
 use App\Http\Requests\{{ context }}\Api\{{ version }}{{ pathSegment }}\Update{{ model }}Request;
-use App\Http\Resources\{{ context }}{{ pathSegment }}\{{ model }}Resource;
-use App\Http\Resources\{{ context }}{{ pathSegment }}\List{{ model }}Resource;
+use App\Http\Resources\{{ context }}\Api\{{ version }}{{ pathSegment }}\{{ model }}Resource;
+use App\Http\Resources\{{ context }}\Api\{{ version }}{{ pathSegment }}\List{{ model }}Resource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 class {{ class }} extends Controller
 {
     public function index(): JsonResponse
     {
+        Gate::authorize('viewAny', {{ model }}::class);
+
         return $this->api->success(
             __('crud.index', ['resource' => '{{ model }}']),
             List{{ model }}Resource::collection({{ model }}::paginate()),
@@ -24,6 +27,8 @@ class {{ class }} extends Controller
 
     public function store(Store{{ model }}Request $request): JsonResponse
     {
+        Gate::authorize('create', {{ model }}::class);
+
         ${{ modelVariable }} = {{ model }}::create($request->validated());
 
         return $this->api->success(
@@ -35,6 +40,8 @@ class {{ class }} extends Controller
 
     public function show({{ model }} ${{ modelVariable }}): JsonResponse
     {
+        Gate::authorize('view', ${{ modelVariable }});
+
         return $this->api->success(
             __('crud.show', ['resource' => '{{ model }}']),
             new {{ model }}Resource(${{ modelVariable }}),
@@ -43,6 +50,8 @@ class {{ class }} extends Controller
 
     public function update(Update{{ model }}Request $request, {{ model }} ${{ modelVariable }}): JsonResponse
     {
+        Gate::authorize('update', ${{ modelVariable }});
+
         ${{ modelVariable }}->update($request->validated());
 
         return $this->api->success(
@@ -53,6 +62,8 @@ class {{ class }} extends Controller
 
     public function destroy({{ model }} ${{ modelVariable }}): JsonResponse
     {
+        Gate::authorize('delete', ${{ modelVariable }});
+
         ${{ modelVariable }}->delete();
 
         return $this->api->success(
@@ -64,6 +75,8 @@ class {{ class }} extends Controller
 
     public function restore({{ model }} ${{ modelVariable }}): JsonResponse
     {
+        Gate::authorize('restore', ${{ modelVariable }});
+
         ${{ modelVariable }}->restore();
 
         return $this->api->success(
@@ -74,6 +87,8 @@ class {{ class }} extends Controller
 
     public function forceDelete({{ model }} ${{ modelVariable }}): JsonResponse
     {
+        Gate::authorize('forceDelete', ${{ modelVariable }});
+
         ${{ modelVariable }}->forceDelete();
 
         return $this->api->success(

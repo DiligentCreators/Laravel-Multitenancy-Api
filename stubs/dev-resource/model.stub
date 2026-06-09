@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 {{ observedByAttribute }}{{ usePolicyAttribute }}class {{ class }} extends Model
 {
-    {{ tenantTraitUsage }}
     use SoftDeletes;
+    {{ tenantTraitUsage }}
     protected $fillable = [
         //
     ];

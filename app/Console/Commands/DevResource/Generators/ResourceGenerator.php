@@ -16,6 +16,8 @@ class ResourceGenerator implements ResourceGeneratorContract
             'Http',
             'Resources',
             ucfirst($context->context),
+            'Api',
+            ucfirst($context->version),
         ];
 
         if ($context->path) {
@@ -32,6 +34,8 @@ class ResourceGenerator implements ResourceGeneratorContract
             'Http',
             'Resources',
             ucfirst($context->context),
+            'Api',
+            ucfirst($context->version),
         ];
 
         if ($context->path) {
@@ -78,7 +82,7 @@ class ResourceGenerator implements ResourceGeneratorContract
             'model' => $model,
             'modelVariable' => lcfirst($model),
             'modelPlural' => lcfirst(Str::plural($model)),
-            'modelNamespace' => sprintf('App\\Models\\%s\\%s', $contextStudly, $model),
+            'modelNamespace' => sprintf('App\\Models\\%s', $model),
         ];
     }
 

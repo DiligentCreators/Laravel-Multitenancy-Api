@@ -118,12 +118,29 @@ class DevResourceCommand extends Command
         $selectedGenerators = $defaultGenerators;
 
         if ($interactive) {
+            $generatorsWithoutMigration = array_values(
+                array_filter($this->generators, fn (string $g) => $g !== 'migration'),
+            );
+
+            $defaultsWithoutMigration = array_values(
+                array_filter($defaultGenerators, fn (string $g) => $g !== 'migration'),
+            );
+
             $selectedGenerators = multiselect(
                 label: 'Select what to generate',
-                options: $this->generators,
-                default: $defaultGenerators,
+                options: $generatorsWithoutMigration,
+                default: $defaultsWithoutMigration,
                 scroll: 15,
             );
+
+            $generateMigration = confirm(
+                label: 'Generate migration?',
+                default: in_array('migration', $defaultGenerators, true),
+            );
+
+            if ($generateMigration) {
+                $selectedGenerators[] = 'migration';
+            }
 
             $confirmed = confirm(
                 label: 'Confirm?',

@@ -17,18 +17,14 @@ class ModelGenerator extends BaseGenerator
     protected function resolvePath(ResourceContext $context): string
     {
         return app_path(sprintf(
-            'Models/%s/%s.php',
-            ucfirst($context->context),
+            'Models/%s.php',
             $context->name,
         ));
     }
 
     protected function resolveNamespace(ResourceContext $context): string
     {
-        return sprintf(
-            'App\\Models\\%s',
-            ucfirst($context->context),
-        );
+        return 'App\\Models';
     }
 
     protected function resolveClass(ResourceContext $context): string

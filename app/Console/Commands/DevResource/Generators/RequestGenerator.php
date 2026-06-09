@@ -85,7 +85,7 @@ class RequestGenerator implements ResourceGenerator
             'model' => $model,
             'modelVariable' => lcfirst($model),
             'modelPlural' => lcfirst(Str::plural($model)),
-            'modelNamespace' => sprintf('App\\Models\\%s\\%s', $contextStudly, $model),
+            'modelNamespace' => sprintf('App\\Models\\%s', $model),
         ];
     }
 
