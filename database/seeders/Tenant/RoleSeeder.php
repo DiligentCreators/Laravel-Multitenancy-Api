@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Seeders\Central;
+namespace Database\Seeders\Tenant;
 
 use App\Enums\RoleScopeEnum;
-use App\Models\Central\Role;
+use App\Models\Tenant\Role;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -13,12 +13,10 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $guardName = 'central-api';
-        $scope = RoleScopeEnum::CENTRAL;
+        $guardName = 'tenant-api';
+        $scope = RoleScopeEnum::TENANT;
         $roles = [
             ['name' => 'superadmin', 'guard_name' => $guardName, 'scope' => $scope],
-            ['name' => 'tester', 'guard_name' => $guardName, 'scope' => $scope],
-            ['name' => 'developer', 'guard_name' => $guardName, 'scope' => $scope],
             ['name' => 'admin', 'guard_name' => $guardName, 'scope' => $scope],
             ['name' => 'manager', 'guard_name' => $guardName, 'scope' => $scope],
             ['name' => 'staff', 'guard_name' => $guardName, 'scope' => $scope],
