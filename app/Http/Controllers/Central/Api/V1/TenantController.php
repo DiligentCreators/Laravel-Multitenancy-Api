@@ -10,31 +10,28 @@ use App\Http\Requests\Central\Api\V1\UpdateTenantRequest;
 use App\Http\Resources\Central\Api\V1\ListTenantResource;
 use App\Http\Resources\Central\Api\V1\TenantResource;
 use App\Models\Tenant;
-use App\Models\User;
+use App\Services\ApiResponseService;
+use App\Services\Central\TenantService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
 class TenantController extends Controller
 {
+    public function __construct(
+        ApiResponseService $api,
+        private readonly TenantService $tenantService,
+    ) {
+        parent::__construct($api);
+    }
+
     public function index(): JsonResponse
     {
         Gate::authorize('viewAny', Tenant::class);
 
-        $tenants = Tenant::query()
-            ->when(request('search'), function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('company_name', 'like', '%'.$search.'%')
-                        ->orWhere('id', 'like', '%'.$search.'%');
-                });
-            })
-            ->when(request('trashed') === 'true', function ($query) {
-                $query->withTrashed();
-            })
-            ->when(request('trashed') === 'only', function ($query) {
-                $query->onlyTrashed();
-            })
-            ->orderBy(request('sort', 'created_at'), request('direction', 'desc'))
-            ->paginate($this->perPage(request()));
+        $tenants = $this->tenantService->paginate(
+            request(),
+            $this->perPage(request())
+        );
 
         return $this->api->success(
             'Tenants retrieved successfully',
@@ -48,21 +45,7 @@ class TenantController extends Controller
 
         $validated = $request->validated();
 
-        $tenant = Tenant::create($validated);
-
-        $domain = $tenant->domains()->create([
-            'domain' => $validated['domain'],
-        ]);
-
-        $user = User::create([
-            'tenant_id' => $domain->tenant_id,
-            'username' => $validated['username'],
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-        ]);
-
-        $tenant->load('domains');
+        $tenant = $this->tenantService->create($validated);
 
         return $this->api->success(
             'Tenant has been created successfully',
@@ -93,22 +76,7 @@ class TenantController extends Controller
             return $this->api->notFound('Cannot update a deleted tenant.');
         }
 
-        $tenant->update($request->validated());
-
-        $domain = $tenant->load('domains');
-
-        $domain->domains()->first()->update([
-            'domain' => $request->domain,
-        ]);
-
-        $user = $tenant->users()->first();
-
-        $user->update([
-            'username' => $request->username,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+        $this->tenantService->update($tenant, $request->validated());
 
         return $this->api->success(
             'Tenant has been updated successfully',

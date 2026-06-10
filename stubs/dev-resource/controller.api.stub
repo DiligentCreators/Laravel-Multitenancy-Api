@@ -19,9 +19,24 @@ class {{ class }} extends Controller
     {
         Gate::authorize('viewAny', {{ model }}::class);
 
+        ${{ modelPlural }} = {{ model }}::query()
+            ->when(request('search'), function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('id', 'like', '%'.$search.'%');
+                });
+            })
+            ->when(request('trashed') === 'true', function ($query) {
+                $query->withTrashed();
+            })
+            ->when(request('trashed') === 'only', function ($query) {
+                $query->onlyTrashed();
+            })
+            ->orderBy(request('sort', 'created_at'), request('direction', 'desc'))
+            ->paginate($this->perPage(request()));
+
         return $this->api->success(
-            __('crud.index', ['resource' => '{{ model }}']),
-            List{{ model }}Resource::collection({{ model }}::paginate()),
+            '{{ modelPlural }} retrieved successfully',
+            List{{ model }}Resource::collection(${{ modelPlural }}),
         );
     }
 
@@ -32,7 +47,7 @@ class {{ class }} extends Controller
         ${{ modelVariable }} = {{ model }}::create($request->validated());
 
         return $this->api->success(
-            __('crud.store', ['resource' => '{{ model }}']),
+            '{{ model }} has been created successfully',
             new {{ model }}Resource(${{ modelVariable }}),
             201,
         );
@@ -43,11 +58,11 @@ class {{ class }} extends Controller
         Gate::authorize('view', ${{ modelVariable }});
 
         if (${{ modelVariable }}->trashed()) {
-            return $this->api->notFound(__('{{ model }} has been deleted.'));
+            return $this->api->notFound('{{ model }} has been deleted.');
         }
 
         return $this->api->success(
-            __('crud.show', ['resource' => '{{ model }}']),
+            '{{ model }} retrieved successfully',
             new {{ model }}Resource(${{ modelVariable }}),
         );
     }
@@ -57,13 +72,13 @@ class {{ class }} extends Controller
         Gate::authorize('update', ${{ modelVariable }});
 
         if (${{ modelVariable }}->trashed()) {
-            return $this->api->notFound(__('Cannot update a deleted {{ modelVariable }}.'));
+            return $this->api->notFound('Cannot update a deleted {{ modelVariable }}.');
         }
 
         ${{ modelVariable }}->update($request->validated());
 
         return $this->api->success(
-            __('crud.update', ['resource' => '{{ model }}']),
+            '{{ model }} has been updated successfully',
             new {{ model }}Resource(${{ modelVariable }}),
         );
     }
@@ -73,15 +88,15 @@ class {{ class }} extends Controller
         Gate::authorize('delete', ${{ modelVariable }});
 
         if (${{ modelVariable }}->trashed()) {
-            return $this->api->notFound(__('{{ model }} is already deleted.'));
+            return $this->api->notFound('{{ model }} is already deleted.');
         }
 
         ${{ modelVariable }}->delete();
 
         return $this->api->success(
-            __('crud.destroy', ['resource' => '{{ model }}']),
+            '{{ model }} has been deleted successfully',
             null,
-            204,
+            200,
         );
     }
 
@@ -90,13 +105,13 @@ class {{ class }} extends Controller
         Gate::authorize('restore', ${{ modelVariable }});
 
         if (! ${{ modelVariable }}->trashed()) {
-            return $this->api->notFound(__('{{ model }} is not deleted.'));
+            return $this->api->notFound('{{ model }} is not deleted.');
         }
 
         ${{ modelVariable }}->restore();
 
         return $this->api->success(
-            __('crud.restore', ['resource' => '{{ model }}']),
+            '{{ model }} has been restored successfully',
             new {{ model }}Resource(${{ modelVariable }}),
         );
     }
@@ -106,15 +121,15 @@ class {{ class }} extends Controller
         Gate::authorize('forceDelete', ${{ modelVariable }});
 
         if (! ${{ modelVariable }}->trashed()) {
-            return $this->api->error(__('{{ model }} must be deleted before force deleting.'), 400);
+            return $this->api->error('{{ model }} must be deleted before force deleting.', 400);
         }
 
         ${{ modelVariable }}->forceDelete();
 
         return $this->api->success(
-            __('crud.force_delete', ['resource' => '{{ model }}']),
+            '{{ model }} has been force deleted successfully',
             null,
-            204,
+            200,
         );
     }
 }

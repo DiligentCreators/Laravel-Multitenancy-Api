@@ -8,6 +8,7 @@ use Database\Factories\Central\TenantFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
@@ -33,19 +34,26 @@ class Tenant extends BaseTenant
         ];
     }
 
+    protected static function newFactory(): TenantFactory
+    {
+        return TenantFactory::new();
+    }
+
     /** @param Tenant $query */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
         return parent::resolveRouteBindingQuery($query->withTrashed(), $value, $field);
     }
 
+    /** @return HasMany<User, $this> */
     public function users()
     {
         return $this->hasMany(User::class);
     }
 
-    protected static function newFactory(): TenantFactory
+    /** @return HasMany<Domain, $this> */
+    public function domains()
     {
-        return TenantFactory::new();
+        return $this->hasMany(Domain::class);
     }
 }

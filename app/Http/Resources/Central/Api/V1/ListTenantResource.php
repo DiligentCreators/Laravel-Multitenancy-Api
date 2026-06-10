@@ -16,10 +16,10 @@ class ListTenantResource extends JsonResource
         return [
             'id' => $this->id,
             'company_name' => $this->company_name,
-            'name' => $this->users()->first()->name,
-            'username' => $this->users()->first()->username,
-            'email' => $this->users()->first()->email,
-            'domain' => $this->domains()->first()->domain,
+            'name' => $this->users()->withTrashed()->first()?->name,
+            'username' => $this->users()->withTrashed()->first()?->username,
+            'email' => $this->users()->withTrashed()->first()?->email,
+            'domain' => $this->domains()->withTrashed()->first()?->domain,
             'created_at' => $this->created_at,
             'deleted_at' => $this->deleted_at,
         ];
