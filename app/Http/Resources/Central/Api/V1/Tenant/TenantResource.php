@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources\Central\Api\V1;
+namespace App\Http\Resources\Central\Api\V1\Tenant;
 
 use App\Models\Tenant;
 use Illuminate\Http\Request;

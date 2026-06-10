@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Central\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Central\Api\V1\StoreTenantRequest;
-use App\Http\Requests\Central\Api\V1\UpdateTenantRequest;
-use App\Http\Resources\Central\Api\V1\ListTenantResource;
-use App\Http\Resources\Central\Api\V1\TenantResource;
+use App\Http\Requests\Central\Api\V1\Tenant\StoreTenantRequest;
+use App\Http\Requests\Central\Api\V1\Tenant\UpdateTenantRequest;
+use App\Http\Resources\Central\Api\V1\Tenant\ListTenantResource;
+use App\Http\Resources\Central\Api\V1\Tenant\TenantResource;
 use App\Models\Tenant;
 use App\Services\ApiResponseService;
 use App\Services\Central\TenantService;

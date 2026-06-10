@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Central\Api\V1;
+namespace App\Http\Requests\Central\Api\V1\Tenant;
 
 use App\Http\Requests\BaseFormRequest;
 use App\Rules\DomainRule;
