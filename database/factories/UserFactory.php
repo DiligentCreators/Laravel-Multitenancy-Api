@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Tenant;
 use App\Models\User;
+use Database\Factories\Central\TenantFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,7 +26,10 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $tenant = Tenant::inRandomOrder()->first() ?? TenantFactory::new()->create();
+
         return [
+            'tenant_id' => $tenant->id,
             'username' => fake()->unique()->userName(),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),

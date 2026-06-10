@@ -38,7 +38,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"tenant1@shaz3e.com\",\r\n    \"password\": \"password\"\r\n}",
+              "raw": "{\r\n    \"email\": \"tenant@shaz3e.com\",\r\n    \"password\": \"123456789\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -87,7 +87,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"tenant1@shaz3e.com\"\r\n}",
+              "raw": "{\r\n    \"email\": \"tenant@shaz3e.com\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -136,7 +136,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"tenant1@shaz3e.com\",\r\n    \"token\": \"e76fb9ca525563233f361bbff67fdabf466980c28f45fef9c1e1ed166d57d2ef\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\"\r\n}",
+              "raw": "{\r\n    \"email\": \"tenant@shaz3e.com\",\r\n    \"token\": \"fb8971b55d15e8d0025a436fae6f963dc6c49f9a0f6e8a9ed7d3f8f4c3960e48\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

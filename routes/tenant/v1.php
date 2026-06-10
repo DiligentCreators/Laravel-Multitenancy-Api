@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Tenant\Api\V1\Auth\ForgotPasswordController;
+use App\Http\Controllers\Tenant\Api\V1\Auth\LoginController;
+use App\Http\Controllers\Tenant\Api\V1\Auth\ResetPasswordController;
+use App\Http\Controllers\Tenant\Api\V1\DashboardController;
+use App\Http\Controllers\Tenant\Api\V1\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,18 +14,18 @@ use Illuminate\Support\Facades\Route;
 | Tenant API — Version 1
 |--------------------------------------------------------------------------
 |
-| Final URL: /api/v1/tenant/...
+| Final URL: /api/tenant/v1/...
 |
 | Examples:
-|   POST /api/v1/tenant/auth/login             (login)
-|   POST /api/v1/tenant/auth/register           (register)
-|   POST /api/v1/tenant/auth/forgot-password    (forgot password)
-|   POST /api/v1/tenant/auth/reset-password     (reset password)
-|   GET  /api/v1/tenant/me                      (current user)
-|   POST /api/v1/tenant/logout                  (logout)
-|   GET  /api/v1/tenant/dashboard               (dashboard)
+|   POST /api/tenant/v1/auth/login             (login)
+|   POST /api/tenant/v1/auth/register           (register)
+|   POST /api/tenant/v1/auth/forgot-password    (forgot password)
+|   POST /api/tenant/v1/auth/reset-password     (reset password)
+|   GET  /api/tenant/v1/me                      (current user)
+|   POST /api/tenant/v1/logout                  (logout)
+|   GET  /api/tenant/v1/dashboard               (dashboard)
 |
-| Middleware applied (from routes/tenant.php):
+| Middleware applied (from routtenant/es.php):
 |   - api         Laravel API middleware group
 |   - tenancy     Custom tenant resolution (domain → header → input)
 |
@@ -61,25 +66,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->name('auth.')->group(function () {
 
-    // POST /api/v1/tenant/auth/register
-    // Body: name, email, password, password_confirmation
-    // Response: { token, user }
-    // Route::post('register', [RegisterController::class, '__invoke']);
+    // POST /api/v1/auth/login
+    Route::post('login', LoginController::class)->name('login');
 
-    // POST /api/v1/tenant/auth/login
-    // Body: email, password
-    // Response: { token, user }
-    // Route::post('login', [LoginController::class, '__invoke']);
+    // POST /api/v1/auth/forgot-password
+    Route::post('forgot-password', ForgotPasswordController::class)->name('forgot-password');
 
-    // POST /api/v1/tenant/auth/forgot-password
-    // Body: email
-    // Response: { message }
-    // Route::post('forgot-password', [ForgotPasswordController::class, '__invoke']);
-
-    // POST /api/v1/tenant/auth/reset-password
+    // POST /api/v1/auth/reset-password
     // Body: email, token, password, password_confirmation
     // Response: { message }
-    // Route::post('reset-password', [ResetPasswordController::class, '__invoke']);
+    Route::post('reset-password', ResetPasswordController::class)->name('reset-password');
 });
 
 /*
@@ -93,17 +89,20 @@ Route::prefix('auth')->name('auth.')->group(function () {
 
 Route::middleware('auth:tenant-api')->group(function () {
 
-    // GET  /api/v1/tenant/me
-    // Route::get('me', [ProfileController::class, 'show']);
+    Route::prefix('me')->name('me.')->group(function () {
+        // GET /api/v1/me
+        Route::get('/', [ProfileController::class, 'me']);
 
-    // POST /api/v1/tenant/logout
-    // Route::post('logout', [Auth\LoginController::class, 'logout']);
+        // Post /api/v1/me
+        Route::post('/', [ProfileController::class, 'update'])->name('update-profile');
 
-    // GET  /api/v1/tenant/dashboard
-    // Route::get('dashboard', [DashboardController::class, '__invoke']);
+        // Post /api/v1/me/password
+        Route::post('password', [ProfileController::class, 'changePassword'])->name('change-password');
 
-    // Future CRM resources:
-    // Route::apiResource('contacts', ContactController::class);
-    // Route::apiResource('leads', LeadController::class);
-    // Route::apiResource('deals', DealController::class);
+        // POST /api/v1/me/logout
+        Route::post('logout', [ProfileController::class, 'logout'])->name('logout');
+    });
+
+    // GET  /api/v1/dashboard
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 });

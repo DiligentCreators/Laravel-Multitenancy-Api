@@ -507,6 +507,24 @@
                 "{{context}}",
                 "v1",
                 "tenants"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "per_page",
+                  "value": "10",
+                  "disabled": true
+                },
+                {
+                  "key": "trashed",
+                  "value": "only",
+                  "description": "only = deleted only | true = Retrieve Active + Deleted",
+                  "disabled": true
+                }
               ]
             }
           },
