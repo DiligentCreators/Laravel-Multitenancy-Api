@@ -132,6 +132,10 @@ class DevResourceCommand extends Command
 
         $selectedGenerators = $defaultGenerators;
 
+        if (in_array('controller', $selectedGenerators, true) && ! in_array('service', $selectedGenerators, true)) {
+            $selectedGenerators[] = 'service';
+        }
+
         if ($interactive) {
             $generatorsWithoutMigration = array_values(
                 array_filter($this->generators, fn (string $g) => $g !== 'migration'),
@@ -147,6 +151,10 @@ class DevResourceCommand extends Command
                 default: $defaultsWithoutMigration,
                 scroll: 15,
             );
+
+            if (in_array('controller', $selectedGenerators, true) && ! in_array('service', $selectedGenerators, true)) {
+                $selectedGenerators[] = 'service';
+            }
 
             $generateMigration = confirm(
                 label: 'Generate migration?',

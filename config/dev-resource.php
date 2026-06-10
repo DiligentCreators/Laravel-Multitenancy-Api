@@ -7,6 +7,7 @@ return [
 
     'default_generators' => [
         'controller',
+        'service',
         'model',
         'request',
         'resource',
@@ -19,6 +20,7 @@ return [
 
     'tenant_default_generators' => [
         'controller',
+        'service',
         'model',
         'request',
         'resource',

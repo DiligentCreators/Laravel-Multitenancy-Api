@@ -5,34 +5,33 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use App\Http\Controllers\Controller;
-use App\Models\{{ model }};
 use App\Http\Requests\{{ context }}\Api\{{ version }}{{ pathSegment }}\Store{{ model }}Request;
 use App\Http\Requests\{{ context }}\Api\{{ version }}{{ pathSegment }}\Update{{ model }}Request;
 use App\Http\Resources\{{ context }}\Api\{{ version }}{{ pathSegment }}\{{ model }}Resource;
 use App\Http\Resources\{{ context }}\Api\{{ version }}{{ pathSegment }}\List{{ model }}Resource;
+use App\Models\{{ model }};
+use App\Services\ApiResponseService;
+use App\Services\{{ context }}\{{ model }}Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
 class {{ class }} extends Controller
 {
+    public function __construct(
+        ApiResponseService $api,
+        private readonly {{ model }}Service ${{ modelVariable }}Service,
+    ) {
+        parent::__construct($api);
+    }
+
     public function index(): JsonResponse
     {
         Gate::authorize('viewAny', {{ model }}::class);
 
-        ${{ modelPlural }} = {{ model }}::query()
-            ->when(request('search'), function ($query, $search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('id', 'like', '%'.$search.'%');
-                });
-            })
-            ->when(request('trashed') === 'true', function ($query) {
-                $query->withTrashed();
-            })
-            ->when(request('trashed') === 'only', function ($query) {
-                $query->onlyTrashed();
-            })
-            ->orderBy(request('sort', 'created_at'), request('direction', 'desc'))
-            ->paginate($this->perPage(request()));
+        ${{ modelPlural }} = $this->{{ modelVariable }}Service->paginate(
+            request(),
+            $this->perPage(request()),
+        );
 
         return $this->api->success(
             '{{ modelPlural }} retrieved successfully',
@@ -44,7 +43,7 @@ class {{ class }} extends Controller
     {
         Gate::authorize('create', {{ model }}::class);
 
-        ${{ modelVariable }} = {{ model }}::create($request->validated());
+        ${{ modelVariable }} = $this->{{ modelVariable }}Service->create($request->validated());
 
         return $this->api->success(
             '{{ model }} has been created successfully',
@@ -75,7 +74,7 @@ class {{ class }} extends Controller
             return $this->api->notFound('Cannot update a deleted {{ modelVariable }}.');
         }
 
-        ${{ modelVariable }}->update($request->validated());
+        $this->{{ modelVariable }}Service->update(${{ modelVariable }}, $request->validated());
 
         return $this->api->success(
             '{{ model }} has been updated successfully',
