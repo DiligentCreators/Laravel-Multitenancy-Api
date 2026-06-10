@@ -21,6 +21,7 @@ class ListTenantResource extends JsonResource
             'email' => $this->users()->first()->email,
             'domain' => $this->domains()->first()->domain,
             'created_at' => $this->created_at,
+            'deleted_at' => $this->deleted_at,
         ];
     }
 }

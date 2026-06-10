@@ -22,19 +22,11 @@ class TenantObserver
 
     public function deleting(Tenant $tenant): void {}
 
-    public function deleted(Tenant $tenant): void
-    {
-        $tenant->domains()->delete();
-        $tenant->users()->delete();
-    }
+    public function deleted(Tenant $tenant): void {}
 
     public function restoring(Tenant $tenant): void {}
 
-    public function restored(Tenant $tenant): void
-    {
-        $tenant->domains()->onlyTrashed()->restore();
-        $tenant->users()->onlyTrashed()->restore();
-    }
+    public function restored(Tenant $tenant): void {}
 
     public function forceDeleting(Tenant $tenant): void {}
 

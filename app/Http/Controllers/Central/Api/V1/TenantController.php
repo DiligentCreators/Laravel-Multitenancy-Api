@@ -20,9 +20,25 @@ class TenantController extends Controller
     {
         Gate::authorize('viewAny', Tenant::class);
 
+        $tenants = Tenant::query()
+            ->when(request('search'), function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('company_name', 'like', '%'.$search.'%')
+                        ->orWhere('id', 'like', '%'.$search.'%');
+                });
+            })
+            ->when(request('trashed') === 'true', function ($query) {
+                $query->withTrashed();
+            })
+            ->when(request('trashed') === 'only', function ($query) {
+                $query->onlyTrashed();
+            })
+            ->orderBy(request('sort', 'created_at'), request('direction', 'desc'))
+            ->paginate($this->perPage(request()));
+
         return $this->api->success(
-            __('crud.index', ['resource' => 'Tenant']),
-            ListTenantResource::collection(Tenant::paginate()),
+            'Tenants retrieved successfully',
+            ListTenantResource::collection($tenants),
         );
     }
 
@@ -49,7 +65,7 @@ class TenantController extends Controller
         $tenant->load('domains');
 
         return $this->api->success(
-            __('crud.store', ['resource' => 'Tenant']),
+            'Tenant has been created successfully',
             new TenantResource($tenant),
             201,
         );
@@ -60,11 +76,11 @@ class TenantController extends Controller
         Gate::authorize('view', $tenant);
 
         if ($tenant->trashed()) {
-            return $this->api->notFound(__('Tenant has been deleted.'));
+            return $this->api->notFound('Tenant has been deleted.');
         }
 
         return $this->api->success(
-            __('crud.show', ['resource' => 'Tenant']),
+            'Tenant retrieved successfully',
             new TenantResource($tenant),
         );
     }
@@ -74,7 +90,7 @@ class TenantController extends Controller
         Gate::authorize('update', $tenant);
 
         if ($tenant->trashed()) {
-            return $this->api->notFound(__('Cannot update a deleted tenant.'));
+            return $this->api->notFound('Cannot update a deleted tenant.');
         }
 
         $tenant->update($request->validated());
@@ -95,7 +111,7 @@ class TenantController extends Controller
         ]);
 
         return $this->api->success(
-            __('crud.update', ['resource' => 'Tenant']),
+            'Tenant has been updated successfully',
             new TenantResource($tenant),
         );
     }
@@ -105,7 +121,7 @@ class TenantController extends Controller
         Gate::authorize('delete', $tenant);
 
         if ($tenant->trashed()) {
-            return $this->api->notFound(__('Tenant is already deleted.'));
+            return $this->api->notFound('Tenant is already deleted.');
         }
 
         $tenant->delete();
@@ -122,13 +138,13 @@ class TenantController extends Controller
         Gate::authorize('restore', $tenant);
 
         if (! $tenant->trashed()) {
-            return $this->api->notFound(__('Tenant is not deleted.'));
+            return $this->api->notFound('Tenant is not deleted.');
         }
 
         $tenant->restore();
 
         return $this->api->success(
-            __('crud.restore', ['resource' => 'Tenant']),
+            'Tenant has been restored successfully',
             new TenantResource($tenant),
         );
     }
@@ -138,7 +154,7 @@ class TenantController extends Controller
         Gate::authorize('forceDelete', $tenant);
 
         if (! $tenant->trashed()) {
-            return $this->api->error(__('Tenant must be deleted before force deleting.'), 400);
+            return $this->api->error('Tenant must be deleted before force deleting.', 400);
         }
 
         $tenant->forceDelete();
