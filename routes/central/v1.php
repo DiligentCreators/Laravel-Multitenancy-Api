@@ -7,6 +7,7 @@ use App\Http\Controllers\Central\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Central\Api\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\Central\Api\V1\DashboardController;
 use App\Http\Controllers\Central\Api\V1\Profile\ProfileController;
+use App\Http\Controllers\Central\Api\V1\RoleController;
 use App\Http\Controllers\Central\Api\V1\TenantController;
 use Illuminate\Support\Facades\Route;
 
@@ -109,6 +110,7 @@ Route::middleware('auth:central-api')->group(function () {
 
     // GET      /api/central/v1/tenants
     // POST     /api/central/v1/tenants
+    // GET      /api/central/v1/tenants/{tenant}
     // PUT      /api/central/v1/tenants/{tenant}
     // DELETE   /api/central/v1/tenants/{tenant}
     // POST     /api/central/v1/tenants/{tenant}/restore
@@ -116,4 +118,10 @@ Route::middleware('auth:central-api')->group(function () {
     Route::apiResource('tenants', TenantController::class);
     Route::post('tenants/{tenant}/restore', [TenantController::class, 'restore'])->name('restore');
     Route::delete('tenants/{tenant}/force', [TenantController::class, 'forceDelete'])->name('force-delete');
+
+    // GET      /api/central/v1/roles
+    // POST     /api/central/v1/roles
+    // GET      /api/central/v1/roles/{role}
+    // PUT      /api/central/v1/roles/{role}
+    Route::apiResource('roles', RoleController::class);
 });
