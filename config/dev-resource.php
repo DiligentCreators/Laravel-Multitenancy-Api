@@ -14,6 +14,7 @@ return [
         'factory',
         'policy',
         'observer',
+        'permissions',
     ],
 
     'tenant_default_generators' => [
@@ -25,5 +26,6 @@ return [
         'factory',
         'policy',
         'observer',
+        'permissions',
     ],
 ];

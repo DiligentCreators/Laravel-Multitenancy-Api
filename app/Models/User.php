@@ -8,6 +8,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
@@ -36,12 +37,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Illuminate\Support\Carbon $updated_at
  * @property-read Tenant $tenant
  */
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['tenant_id', 'username', 'name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use BelongsToTenant, HasApiTokens, HasFactory, HasRoles, Notifiable;
+    use BelongsToTenant, HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     protected function casts(): array
     {

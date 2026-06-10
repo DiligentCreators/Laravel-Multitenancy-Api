@@ -21,9 +21,8 @@ class MigrationGenerator extends BaseGenerator
         $table = Str::plural(Str::snake($context->name));
 
         return database_path(sprintf(
-            'migrations/%s_create_%s_%s_table.php',
+            'migrations/%s_create_%s_table.php',
             $timestamp,
-            $context->context,
             $table,
         ));
     }

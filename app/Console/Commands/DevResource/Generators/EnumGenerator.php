@@ -7,29 +7,33 @@ namespace App\Console\Commands\DevResource\Generators;
 use App\Console\Commands\DevResource\BaseGenerator;
 use App\Console\Commands\DevResource\ResourceContext;
 
-class ObserverGenerator extends BaseGenerator
+class EnumGenerator extends BaseGenerator
 {
     protected function stubKey(): string
     {
-        return 'observer';
+        return 'enum';
     }
 
     protected function resolvePath(ResourceContext $context): string
     {
         return app_path(sprintf(
-            'Observers/%sObserver.php',
+            'Enums/%s/%sEnum.php',
+            ucfirst($context->context),
             $context->name,
         ));
     }
 
     protected function resolveNamespace(ResourceContext $context): string
     {
-        return 'App\\Observers';
+        return sprintf(
+            'App\\Enums\\%s',
+            ucfirst($context->context),
+        );
     }
 
     protected function resolveClass(ResourceContext $context): string
     {
-        return sprintf('%sObserver', $context->name);
+        return sprintf('%sEnum', $context->name);
     }
 
     protected function extraPlaceholders(ResourceContext $context): array

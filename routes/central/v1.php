@@ -7,6 +7,7 @@ use App\Http\Controllers\Central\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Central\Api\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\Central\Api\V1\DashboardController;
 use App\Http\Controllers\Central\Api\V1\Profile\ProfileController;
+use App\Http\Controllers\Central\Api\V1\TenantController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -105,4 +106,14 @@ Route::middleware('auth:central-api')->group(function () {
 
     // GET  /api/v1/dashboard
     Route::get('dashboard', DashboardController::class);
+
+    // GET      /api/v1/tenants
+    // POST     /api/v1/tenants
+    // PUT      /api/v1/tenants/{tenant}
+    // DELETE   /api/v1/tenants/{tenant}
+    // POST     /api/v1/tenants/{tenant}/restore
+    // DELETE   /api/v1/tenants/{tenant}/force
+    Route::apiResource('tenants', TenantController::class);
+    Route::post('tenants/{tenant}/restore', [TenantController::class, 'restore']);
+    Route::delete('tenants/{tenant}/force', [TenantController::class, 'forceDelete']);
 });

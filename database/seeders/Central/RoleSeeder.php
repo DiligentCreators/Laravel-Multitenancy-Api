@@ -12,7 +12,7 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $guardName = 'web';
+        $guardName = 'central-api';
         $roles = [
             ['name' => 'superadmin', 'guard_name' => $guardName],
             ['name' => 'tester', 'guard_name' => $guardName],

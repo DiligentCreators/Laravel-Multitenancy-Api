@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;{{ observedByImport }}{{ usePolicyImport }}{{ observerImport }}{{ policyImport }}{{ tenantTraitImport }}
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 {{ observedByAttribute }}{{ usePolicyAttribute }}class {{ class }} extends Model
 {
-    use SoftDeletes;
-    {{ tenantTraitUsage }}
+    /** @use HasFactory<\Database\Factories\{{ context }}\{{ class }}Factory> */
+    use HasFactory, SoftDeletes{{ tenantTraitUsage }};
+
     protected $fillable = [
         //
     ];
@@ -18,5 +20,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     protected function casts(): array
     {
         return [];
+    }
+
+    public function resolveRouteBindingQuery($query, $value, $field = null)
+    {
+        return parent::resolveRouteBindingQuery($query->withTrashed(), $value, $field);
+    }
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\{{ context }}\{{ class }}Factory::new();
     }
 }

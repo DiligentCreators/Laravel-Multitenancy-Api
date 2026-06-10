@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['central.domain'])
-    ->prefix('v1')
+    ->prefix('central/v1')
     ->name('central.')
     ->group(base_path('routes/central/v1.php'));
 

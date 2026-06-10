@@ -46,12 +46,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/login",
+              "raw": "{{base_url}}/api/{{context}}/v1/auth/login",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "auth",
                 "login"
@@ -94,12 +95,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/forgot-password",
+              "raw": "{{base_url}}/api/{{context}}/v1/auth/forgot-password",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "auth",
                 "forgot-password"
@@ -142,12 +144,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/reset-password",
+              "raw": "{{base_url}}/api/{{context}}/v1/auth/reset-password",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "auth",
                 "reset-password"
@@ -196,12 +199,13 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/me/logout",
+              "raw": "{{base_url}}/api/{{context}}/v1/me/logout",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "me",
                 "logout"
@@ -245,12 +249,13 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/me",
+              "raw": "{{base_url}}/api/{{context}}/v1/me",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "me"
               ]
@@ -302,12 +307,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/me",
+              "raw": "{{base_url}}/api/{{context}}/v1/me",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "me"
               ]
@@ -359,12 +365,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/me/password",
+              "raw": "{{base_url}}/api/{{context}}/v1/me/password",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "me",
                 "password"
@@ -425,12 +432,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/dashboard",
+              "raw": "{{base_url}}/api/{{context}}/v1/dashboard",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "dashboard"
               ]

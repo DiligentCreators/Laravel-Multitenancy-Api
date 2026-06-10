@@ -50,7 +50,7 @@ Route::middleware([
     'api',
     'tenancy',
 ])->group(function () {
-    Route::prefix('api/v1/tenant')
+    Route::prefix('api/tenant/v1')
         ->name('tenant.')
         ->group(base_path('routes/tenant/v1.php'));
 

@@ -5,14 +5,21 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Console\Commands\DevResource\Contracts\ResourceGenerator;
+use App\Console\Commands\DevResource\Generators\ActionGenerator;
 use App\Console\Commands\DevResource\Generators\ControllerGenerator;
+use App\Console\Commands\DevResource\Generators\DtoGenerator;
+use App\Console\Commands\DevResource\Generators\EnumGenerator;
 use App\Console\Commands\DevResource\Generators\FactoryGenerator;
 use App\Console\Commands\DevResource\Generators\MigrationGenerator;
 use App\Console\Commands\DevResource\Generators\ModelGenerator;
 use App\Console\Commands\DevResource\Generators\ObserverGenerator;
+use App\Console\Commands\DevResource\Generators\PermissionConfigGenerator;
 use App\Console\Commands\DevResource\Generators\PolicyGenerator;
+use App\Console\Commands\DevResource\Generators\RepositoryGenerator;
 use App\Console\Commands\DevResource\Generators\RequestGenerator;
 use App\Console\Commands\DevResource\Generators\ResourceGenerator as ResourceApiGenerator;
+use App\Console\Commands\DevResource\Generators\ServiceGenerator;
+use App\Console\Commands\DevResource\Generators\TestGenerator;
 use App\Console\Commands\DevResource\ResourceContext;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -45,6 +52,7 @@ class DevResourceCommand extends Command
         'factory',
         'policy',
         'observer',
+        'permissions',
         'service',
         'repository',
         'action',
@@ -62,6 +70,13 @@ class DevResourceCommand extends Command
         'factory' => FactoryGenerator::class,
         'policy' => PolicyGenerator::class,
         'observer' => ObserverGenerator::class,
+        'permissions' => PermissionConfigGenerator::class,
+        'service' => ServiceGenerator::class,
+        'repository' => RepositoryGenerator::class,
+        'action' => ActionGenerator::class,
+        'dto' => DtoGenerator::class,
+        'enum' => EnumGenerator::class,
+        'test' => TestGenerator::class,
     ];
 
     public function handle(): int
@@ -195,6 +210,8 @@ class DevResourceCommand extends Command
             'migration',
             'factory',
             'policy',
+            'observer',
+            'permissions',
         ]));
     }
 

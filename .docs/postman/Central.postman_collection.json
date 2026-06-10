@@ -46,12 +46,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/login",
+              "raw": "{{base_url}}/api/{{context}}/v1/auth/login",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "auth",
                 "login"
@@ -94,12 +95,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/forgot-password",
+              "raw": "{{base_url}}/api/{{context}}/v1/auth/forgot-password",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "auth",
                 "forgot-password"
@@ -134,7 +136,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"superadmin@shaz3e.com\",\r\n    \"token\": \"e76fb9ca525563233f361bbff67fdabf466980c28f45fef9c1e1ed166d57d2ef\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\"\r\n}",
+              "raw": "{\r\n    \"email\": \"superadmin@shaz3e.com\",\r\n    \"token\": \"f593495f7504ad2e082cdaa2179947caee342b49eda485b4d48da84e975e9041\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -142,12 +144,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/auth/reset-password",
+              "raw": "{{base_url}}/api/{{context}}/v1/auth/reset-password",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "auth",
                 "reset-password"
@@ -196,12 +199,13 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/me/logout",
+              "raw": "{{base_url}}/api/{{context}}/v1/me/logout",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "me",
                 "logout"
@@ -245,12 +249,13 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/me",
+              "raw": "{{base_url}}/api/{{context}}/v1/me",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "me"
               ]
@@ -302,12 +307,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/me",
+              "raw": "{{base_url}}/api/{{context}}/v1/me",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "me"
               ]
@@ -351,7 +357,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"old_password\": \"123456789\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\"\r\n}",
+              "raw": "{\r\n    \"old_password\": \"password\",\r\n    \"password\": \"123456789\",\r\n    \"password_confirmation\": \"123456789\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -359,12 +365,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/me/password",
+              "raw": "{{base_url}}/api/{{context}}/v1/me/password",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "me",
                 "password"
@@ -425,14 +432,445 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/dashboard",
+              "raw": "{{base_url}}/api/{{context}}/v1/dashboard",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
+                "{{context}}",
                 "v1",
                 "dashboard"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tenants",
+      "item": [
+        {
+          "name": "Tenants List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/tenants",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "tenants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tenant Create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "console.log(response);\r",
+                  "pm.environment.set(\"tenant_id\", response.data.id);\r",
+                  "console.log('Tenant ID: ', response.data.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"company_name\": \"ABC Corporation\", // Optional\r\n    \"name\": \"John Doe\", // Required\r\n    \"username\": \"john_doe\", // Required\r\n    \"email\": \"tenant@shaz3e.com\", // Required\r\n    \"password\": \"123456789\", // Required\r\n    \"domain\": \"tenant.laravel-multitenancy-api.test\" // Required\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/tenants",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "tenants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tenants Show",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/tenants/{{tenant_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "tenants",
+                "{{tenant_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tenant Update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();\r",
+                  "console.log(response);\r",
+                  "pm.environment.set(\"tenant_id\", response.data.id);\r",
+                  "console.log('Tenant ID: ', response.data.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"company_name\": \"XYZ Corporation\", // Optional\r\n    \"name\": \"John Doe\", // Required\r\n    \"username\": \"john_doe203\", // Required\r\n    \"email\": \"tenant1001@shaz3e.com\", // Required\r\n    \"password\": \"123456789\", // Optional\r\n    \"domain\": \"tenant1001.laravel-multitenancy-api.test\" // Required\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/tenants/{{tenant_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "tenants",
+                "{{tenant_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tenant Delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/tenants/{{tenant_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "tenants",
+                "{{tenant_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tenant Restore",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/tenants/{{tenant_id}}/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "tenants",
+                "{{tenant_id}}",
+                "restore"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tenant Force Delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/tenants/{{tenant_id}}/force",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "tenants",
+                "{{tenant_id}}",
+                "force"
               ]
             }
           },

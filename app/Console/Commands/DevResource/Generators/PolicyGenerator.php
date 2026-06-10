@@ -17,18 +17,14 @@ class PolicyGenerator extends BaseGenerator
     protected function resolvePath(ResourceContext $context): string
     {
         return app_path(sprintf(
-            'Policies/%s/%sPolicy.php',
-            ucfirst($context->context),
+            'Policies/%sPolicy.php',
             $context->name,
         ));
     }
 
     protected function resolveNamespace(ResourceContext $context): string
     {
-        return sprintf(
-            'App\\Policies\\%s',
-            ucfirst($context->context),
-        );
+        return 'App\\Policies';
     }
 
     protected function resolveClass(ResourceContext $context): string

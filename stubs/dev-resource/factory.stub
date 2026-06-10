@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
+use App\Models\{{ model }};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class {{ class }} extends Factory
@@ -15,5 +16,12 @@ class {{ class }} extends Factory
         return [
             //
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function ({{ model }} ${{ modelVariable }}) {
+            // Create related models after the main model is created
+        });
     }
 }

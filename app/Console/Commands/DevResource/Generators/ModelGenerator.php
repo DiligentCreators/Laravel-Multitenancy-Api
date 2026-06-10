@@ -40,8 +40,8 @@ class ModelGenerator extends BaseGenerator
         $hasObserver = in_array('observer', $context->generators, true);
         $hasPolicy = in_array('policy', $context->generators, true);
 
-        $observerNamespace = sprintf('App\\Observers\\%s\\%sObserver', $studlyContext, $model);
-        $policyNamespace = sprintf('App\\Policies\\%s\\%sPolicy', $studlyContext, $model);
+        $observerNamespace = sprintf('App\\Observers\\%sObserver', $model);
+        $policyNamespace = sprintf('App\\Policies\\%sPolicy', $model);
 
         return [
             'observedByImport' => $hasObserver

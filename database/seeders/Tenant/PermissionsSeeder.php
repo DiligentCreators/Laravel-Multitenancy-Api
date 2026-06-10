@@ -1,34 +1,30 @@
 <?php
 
-namespace Database\Seeders\Central;
+declare(strict_types=1);
 
-use App\Models\Central\Permission;
+namespace Database\Seeders\Tenant;
+
+use App\Models\Permission;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class PermissionsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Disable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        Permission::where('guard_name', 'central-api')->delete();
+        Permission::where('guard_name', 'tenant-api')->delete();
 
-        // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Fetch permissions from the config and seed
-        $permissions = config('central-permissions');
+        $permissions = config('tenant-permissions');
 
         foreach ($permissions as $module => $actions) {
             foreach ($actions as $action) {
                 Permission::firstOrCreate([
                     'name' => "{$module}.{$action}",
-                    'guard_name' => 'central-api',
+                    'guard_name' => 'tenant-api',
                 ]);
             }
         }

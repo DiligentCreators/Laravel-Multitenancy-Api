@@ -8,63 +8,35 @@ use App\Models\{{ model }};
 
 class {{ class }}
 {
-    public function creating({{ model }} ${{ modelVariable }}): void
-    {
-        //
-    }
+    public function creating({{ model }} ${{ modelVariable }}): void{}
 
-    public function created({{ model }} ${{ modelVariable }}): void
-    {
-        //
-    }
+    public function created({{ model }} ${{ modelVariable }}): void{}
 
-    public function updating({{ model }} ${{ modelVariable }}): void
-    {
-        //
-    }
+    public function updating({{ model }} ${{ modelVariable }}): void{}
 
-    public function updated({{ model }} ${{ modelVariable }}): void
-    {
-        //
-    }
+    public function updated({{ model }} ${{ modelVariable }}): void{}
 
-    public function saving({{ model }} ${{ modelVariable }}): void
-    {
-        //
-    }
+    public function saving({{ model }} ${{ modelVariable }}): void{}
 
-    public function saved({{ model }} ${{ modelVariable }}): void
-    {
-        //
-    }
+    public function saved({{ model }} ${{ modelVariable }}): void{}
 
-    public function deleting({{ model }} ${{ modelVariable }}): void
-    {
-        //
-    }
+    public function deleting({{ model }} ${{ modelVariable }}): void{}
 
     public function deleted({{ model }} ${{ modelVariable }}): void
     {
-        //
-    }
-
-    public function restoring({{ model }} ${{ modelVariable }}): void
-    {
-        //
+        // Cascade soft delete to related models
+        // ${{ modelVariable }}->related()->delete();
     }
 
     public function restored({{ model }} ${{ modelVariable }}): void
     {
-        //
-    }
-
-    public function forceDeleting({{ model }} ${{ modelVariable }}): void
-    {
-        //
+        // Cascade restore to related models
+        // ${{ modelVariable }}->related()->onlyTrashed()->restore();
     }
 
     public function forceDeleted({{ model }} ${{ modelVariable }}): void
     {
-        //
+        // Cascade force delete to related models
+        // ${{ modelVariable }}->related()->onlyTrashed()->forceDelete();
     }
 }

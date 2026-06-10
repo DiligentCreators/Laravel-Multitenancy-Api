@@ -37,13 +37,13 @@ class AppServiceProvider extends ServiceProvider
          * This only applies to CentralUser instances on the 'central-api' guard.
          * Tenant User instances are NOT affected.
          */
-        Gate::before(function ($user, $ability) {
-            if ($user instanceof CentralUser && $user->hasRole('Super Admin')) {
-                return true;
-            }
+        // Gate::before(function ($user, $ability) {
+        //     if ($user instanceof CentralUser && $user->hasRole('Super Admin')) {
+        //         return true;
+        //     }
 
-            return null;
-        });
+        //     return null;
+        // });
 
         Model::automaticallyEagerLoadRelationships();
 

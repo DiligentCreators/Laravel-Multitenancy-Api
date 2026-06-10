@@ -42,6 +42,10 @@ class {{ class }} extends Controller
     {
         Gate::authorize('view', ${{ modelVariable }});
 
+        if (${{ modelVariable }}->trashed()) {
+            return $this->api->notFound(__('{{ model }} has been deleted.'));
+        }
+
         return $this->api->success(
             __('crud.show', ['resource' => '{{ model }}']),
             new {{ model }}Resource(${{ modelVariable }}),
@@ -51,6 +55,10 @@ class {{ class }} extends Controller
     public function update(Update{{ model }}Request $request, {{ model }} ${{ modelVariable }}): JsonResponse
     {
         Gate::authorize('update', ${{ modelVariable }});
+
+        if (${{ modelVariable }}->trashed()) {
+            return $this->api->notFound(__('Cannot update a deleted {{ modelVariable }}.'));
+        }
 
         ${{ modelVariable }}->update($request->validated());
 
@@ -63,6 +71,10 @@ class {{ class }} extends Controller
     public function destroy({{ model }} ${{ modelVariable }}): JsonResponse
     {
         Gate::authorize('delete', ${{ modelVariable }});
+
+        if (${{ modelVariable }}->trashed()) {
+            return $this->api->notFound(__('{{ model }} is already deleted.'));
+        }
 
         ${{ modelVariable }}->delete();
 
@@ -77,6 +89,10 @@ class {{ class }} extends Controller
     {
         Gate::authorize('restore', ${{ modelVariable }});
 
+        if (! ${{ modelVariable }}->trashed()) {
+            return $this->api->notFound(__('{{ model }} is not deleted.'));
+        }
+
         ${{ modelVariable }}->restore();
 
         return $this->api->success(
@@ -88,6 +104,10 @@ class {{ class }} extends Controller
     public function forceDelete({{ model }} ${{ modelVariable }}): JsonResponse
     {
         Gate::authorize('forceDelete', ${{ modelVariable }});
+
+        if (! ${{ modelVariable }}->trashed()) {
+            return $this->api->error(__('{{ model }} must be deleted before force deleting.'), 400);
+        }
 
         ${{ modelVariable }}->forceDelete();
 

@@ -68,7 +68,7 @@ class {{ class }}
 
     public function forceDelete({{ userModel }} ${{ userModelVariable }}, {{ model }} ${{ modelVariable }}): bool
     {
-        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.force-delete')) {
+        if (${{ userModelVariable }}->can('{{ nameKebabPlural }}.force.delete')) {
             return true;
         }
 

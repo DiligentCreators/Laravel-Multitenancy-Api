@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('{{ qualifiedTable }}', function (Blueprint $table) {
+        Schema::create('{{ table }}', function (Blueprint $table) {
             $table->id();
 {{ tenantMigrationFields }}
             $table->softDeletes();
@@ -20,6 +20,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('{{ qualifiedTable }}');
+        Schema::dropIfExists('{{ table }}');
     }
 };

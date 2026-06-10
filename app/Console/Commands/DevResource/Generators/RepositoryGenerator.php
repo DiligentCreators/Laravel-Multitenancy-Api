@@ -7,29 +7,33 @@ namespace App\Console\Commands\DevResource\Generators;
 use App\Console\Commands\DevResource\BaseGenerator;
 use App\Console\Commands\DevResource\ResourceContext;
 
-class ObserverGenerator extends BaseGenerator
+class RepositoryGenerator extends BaseGenerator
 {
     protected function stubKey(): string
     {
-        return 'observer';
+        return 'repository';
     }
 
     protected function resolvePath(ResourceContext $context): string
     {
         return app_path(sprintf(
-            'Observers/%sObserver.php',
+            'Repositories/%s/%sRepository.php',
+            ucfirst($context->context),
             $context->name,
         ));
     }
 
     protected function resolveNamespace(ResourceContext $context): string
     {
-        return 'App\\Observers';
+        return sprintf(
+            'App\\Repositories\\%s',
+            ucfirst($context->context),
+        );
     }
 
     protected function resolveClass(ResourceContext $context): string
     {
-        return sprintf('%sObserver', $context->name);
+        return sprintf('%sRepository', $context->name);
     }
 
     protected function extraPlaceholders(ResourceContext $context): array
