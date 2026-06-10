@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{{ context }}\Api\{{ version }}{{ pathSegment }}\Store{{ model }}Request;
-use App\Http\Requests\{{ context }}\Api\{{ version }}{{ pathSegment }}\Update{{ model }}Request;
-use App\Http\Resources\{{ context }}\Api\{{ version }}{{ pathSegment }}\{{ model }}Resource;
-use App\Http\Resources\{{ context }}\Api\{{ version }}{{ pathSegment }}\List{{ model }}Resource;
+use App\Http\Requests\{{ context }}\Api\{{ version }}\{{ model }}\Store{{ model }}Request;
+use App\Http\Requests\{{ context }}\Api\{{ version }}\{{ model }}\Update{{ model }}Request;
+use App\Http\Resources\{{ context }}\Api\{{ version }}\{{ model }}\{{ model }}Resource;
+use App\Http\Resources\{{ context }}\Api\{{ version }}\{{ model }}\List{{ model }}Resource;
 use App\Models\{{ model }};
 use App\Services\ApiResponseService;
 use App\Services\{{ context }}\{{ model }}Service;

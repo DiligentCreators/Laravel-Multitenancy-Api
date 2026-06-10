@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\DevResource\Generators;
 
-use App\Console\Commands\DevResource\Contracts\ResourceGenerator;
+use App\Console\Commands\DevResource\BaseGenerator;
 use App\Console\Commands\DevResource\ResourceContext;
-use Illuminate\Support\Str;
 
-class RequestGenerator implements ResourceGenerator
+class RequestGenerator extends BaseGenerator
 {
-    private function resolveBasePath(ResourceContext $context): string
+    protected function stubKey(): string
+    {
+        return 'request';
+    }
+
+    protected function resolvePath(ResourceContext $context): string
     {
         $parts = [
             'Http',
@@ -18,16 +22,15 @@ class RequestGenerator implements ResourceGenerator
             ucfirst($context->context),
             'Api',
             ucfirst($context->version),
+            $context->name,
         ];
 
-        if ($context->path) {
-            $parts[] = $context->path;
-        }
+        $parts[] = sprintf('Store%sRequest.php', $context->name);
 
         return app_path(implode('/', $parts));
     }
 
-    private function resolveNamespace(ResourceContext $context): string
+    protected function resolveNamespace(ResourceContext $context): string
     {
         $parts = [
             'App',
@@ -36,64 +39,30 @@ class RequestGenerator implements ResourceGenerator
             ucfirst($context->context),
             'Api',
             ucfirst($context->version),
+            $context->name,
         ];
-
-        if ($context->path) {
-            $parts[] = $context->path;
-        }
 
         return implode('\\', $parts);
     }
 
-    private function loadStub(string $key): string
+    protected function resolveClass(ResourceContext $context): string
     {
-        return file_get_contents(base_path(sprintf('stubs/dev-resource/%s.stub', $key)));
+        return sprintf('Store%sRequest', $context->name);
     }
 
-    private function replacePlaceholders(string $content, array $placeholders): string
+    protected function extraPlaceholders(ResourceContext $context): array
     {
-        foreach ($placeholders as $key => $value) {
-            $content = str_replace(sprintf('{{ %s }}', $key), $value, $content);
-        }
-
-        return $content;
-    }
-
-    private function writeFile(string $path, string $content): void
-    {
-        $dir = dirname($path);
-
-        if (! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        file_put_contents($path, $content);
-    }
-
-    private function commonPlaceholders(ResourceContext $context): array
-    {
-        $contextStudly = ucfirst($context->context);
-        $contextLower = $context->context;
-        $model = $context->name;
-
-        return [
-            'context' => $contextStudly,
-            'contextLower' => $contextLower,
-            'version' => ucfirst($context->version),
-            'versionLower' => $context->version,
-            'path' => $context->path ?: $context->name,
-            'model' => $model,
-            'modelVariable' => lcfirst($model),
-            'modelPlural' => lcfirst(Str::plural($model)),
-            'modelNamespace' => sprintf('App\\Models\\%s', $model),
-        ];
+        return [];
     }
 
     public function generate(ResourceContext $context): void
     {
         $namespace = $this->resolveNamespace($context);
-        $basePath = $this->resolveBasePath($context);
-        $basePlaceholders = $this->commonPlaceholders($context);
+        $basePath = dirname($this->resolvePath($context));
+        $basePlaceholders = array_merge(
+            $this->commonPlaceholders($context),
+            ['namespace' => $namespace],
+        );
 
         foreach (['store', 'update'] as $type) {
             $className = sprintf('%s%sRequest', ucfirst($type), $context->name);
@@ -103,13 +72,17 @@ class RequestGenerator implements ResourceGenerator
                 continue;
             }
 
-            $stub = $this->loadStub(sprintf('%s.request', $type));
+            $stub = $this->loadStubFromKey(sprintf('%s.request', $type));
             $content = $this->replacePlaceholders($stub, array_merge($basePlaceholders, [
-                'namespace' => $namespace,
                 'class' => $className,
             ]));
 
             $this->writeFile($path, $content);
         }
+    }
+
+    private function loadStubFromKey(string $key): string
+    {
+        return file_get_contents(base_path(sprintf('stubs/dev-resource/%s.stub', $key)));
     }
 }

@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Console\Commands\DevResource\Generators;
 
-use App\Console\Commands\DevResource\Contracts\ResourceGenerator as ResourceGeneratorContract;
+use App\Console\Commands\DevResource\BaseGenerator;
 use App\Console\Commands\DevResource\ResourceContext;
-use Illuminate\Support\Str;
 
-class ResourceGenerator implements ResourceGeneratorContract
+class ResourceGenerator extends BaseGenerator
 {
-    private function resolveBasePath(ResourceContext $context): string
+    protected function stubKey(): string
+    {
+        return 'resource';
+    }
+
+    protected function resolvePath(ResourceContext $context): string
     {
         $parts = [
             'Http',
@@ -18,16 +22,15 @@ class ResourceGenerator implements ResourceGeneratorContract
             ucfirst($context->context),
             'Api',
             ucfirst($context->version),
+            $context->name,
         ];
 
-        if ($context->path) {
-            $parts[] = $context->path;
-        }
+        $parts[] = sprintf('%sResource.php', $context->name);
 
         return app_path(implode('/', $parts));
     }
 
-    private function resolveNamespace(ResourceContext $context): string
+    protected function resolveNamespace(ResourceContext $context): string
     {
         $parts = [
             'App',
@@ -36,86 +39,52 @@ class ResourceGenerator implements ResourceGeneratorContract
             ucfirst($context->context),
             'Api',
             ucfirst($context->version),
+            $context->name,
         ];
-
-        if ($context->path) {
-            $parts[] = $context->path;
-        }
 
         return implode('\\', $parts);
     }
 
-    private function loadStub(string $key): string
+    protected function resolveClass(ResourceContext $context): string
     {
-        return file_get_contents(base_path(sprintf('stubs/dev-resource/%s.stub', $key)));
+        return sprintf('%sResource', $context->name);
     }
 
-    private function replacePlaceholders(string $content, array $placeholders): string
+    protected function extraPlaceholders(ResourceContext $context): array
     {
-        foreach ($placeholders as $key => $value) {
-            $content = str_replace(sprintf('{{ %s }}', $key), $value, $content);
-        }
-
-        return $content;
-    }
-
-    private function writeFile(string $path, string $content): void
-    {
-        $dir = dirname($path);
-
-        if (! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        file_put_contents($path, $content);
-    }
-
-    private function commonPlaceholders(ResourceContext $context): array
-    {
-        $contextStudly = ucfirst($context->context);
-        $model = $context->name;
-
-        return [
-            'context' => $contextStudly,
-            'contextLower' => $context->context,
-            'path' => $context->path,
-            'model' => $model,
-            'modelVariable' => lcfirst($model),
-            'modelPlural' => lcfirst(Str::plural($model)),
-            'modelNamespace' => sprintf('App\\Models\\%s', $model),
-        ];
+        return [];
     }
 
     public function generate(ResourceContext $context): void
     {
         $namespace = $this->resolveNamespace($context);
-        $basePath = $this->resolveBasePath($context);
-        $basePlaceholders = $this->commonPlaceholders($context);
+        $basePath = dirname($this->resolvePath($context));
+        $basePlaceholders = array_merge(
+            $this->commonPlaceholders($context),
+            ['namespace' => $namespace],
+        );
 
-        // Single resource: {Model}Resource.php
-        $singleClass = sprintf('%sResource', $context->name);
-        $singlePath = sprintf('%s/%s.php', $basePath, $singleClass);
+        foreach ([
+            'resource' => sprintf('%sResource', $context->name),
+            'list.resource' => sprintf('List%sResource', $context->name),
+        ] as $stubKey => $className) {
+            $path = sprintf('%s/%s.php', $basePath, $className);
 
-        if (! file_exists($singlePath) || $context->force) {
-            $stub = $this->loadStub('resource');
+            if (file_exists($path) && ! $context->force) {
+                continue;
+            }
+
+            $stub = $this->loadStubFromKey($stubKey);
             $content = $this->replacePlaceholders($stub, array_merge($basePlaceholders, [
-                'namespace' => $namespace,
-                'class' => $singleClass,
+                'class' => $className,
             ]));
-            $this->writeFile($singlePath, $content);
-        }
 
-        // List resource: List{Model}Resource.php
-        $listClass = sprintf('List%sResource', $context->name);
-        $listPath = sprintf('%s/%s.php', $basePath, $listClass);
-
-        if (! file_exists($listPath) || $context->force) {
-            $stub = $this->loadStub('list.resource');
-            $content = $this->replacePlaceholders($stub, array_merge($basePlaceholders, [
-                'namespace' => $namespace,
-                'class' => $listClass,
-            ]));
-            $this->writeFile($listPath, $content);
+            $this->writeFile($path, $content);
         }
+    }
+
+    private function loadStubFromKey(string $key): string
+    {
+        return file_get_contents(base_path(sprintf('stubs/dev-resource/%s.stub', $key)));
     }
 }
