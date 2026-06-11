@@ -9,6 +9,7 @@ use Database\Factories\Central\CentralUserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,6 +37,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */
+#[UseFactory(CentralUserFactory::class)]
 #[Fillable(['name', 'email', 'password', 'is_suspended'])]
 #[Hidden(['password', 'remember_token'])]
 #[ObservedBy(CentralUserObserver::class)]

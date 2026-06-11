@@ -31,4 +31,16 @@ class CentralUserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Assign a role to the user after creating.
+     *
+     * @param  string  $role
+     */
+    public function withRole($role): static
+    {
+        return $this->afterCreating(function (CentralUser $user) use ($role) {
+            $user->assignRole($role);
+        });
+    }
 }
