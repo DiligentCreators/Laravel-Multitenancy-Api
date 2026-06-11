@@ -56,9 +56,12 @@ class RoleController extends Controller
     {
         Gate::authorize('view', $role);
 
+        $role = $this->roleService->getRolePermissions($role);
+        $allPermissions = $this->roleService->getAllPermissionsWithAssignment($role);
+
         return $this->api->success(
             'Role retrieved successfully',
-            new RoleResource($role),
+            new RoleResource($role, $allPermissions),
         );
     }
 
@@ -66,11 +69,15 @@ class RoleController extends Controller
     {
         Gate::authorize('update', $role);
 
-        $this->roleService->update($role, $request->validated());
+        $this->roleService->update($role, $request->safe()->except('permissions'));
+
+        if ($request->filled('permissions')) {
+            $this->roleService->syncRolePermission($role, $request->input('permissions'));
+        }
 
         return $this->api->success(
             'Role has been updated successfully',
-            new RoleResource($role),
+            new RoleResource($role->load('permissions')),
         );
     }
 }

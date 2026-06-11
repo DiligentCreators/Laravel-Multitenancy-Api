@@ -18,6 +18,14 @@ class UpdateRoleRequest extends BaseFormRequest
                 'max:100',
                 Rule::unique('roles', 'name')->ignore($this->role),
             ],
+            'permissions' => [
+                'nullable',
+                'array',
+            ],
+            'permissions.*' => [
+                'integer',
+                'exists:permissions,id',
+            ],
         ];
     }
 }

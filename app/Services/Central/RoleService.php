@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Central;
 
+use App\Enums\RoleScopeEnum;
+use App\Models\Central\Permission;
 use App\Models\Central\Role;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class RoleService
 {
@@ -27,6 +29,7 @@ class RoleService
                     $query->where('id', 'like', "%{$search}%");
                 });
             })
+            ->where('scope', RoleScopeEnum::CENTRAL)
             ->orderBy(
                 $request->input('sort', 'created_at'),
                 $request->input('direction', 'desc')
@@ -62,5 +65,30 @@ class RoleService
         $role->update($data);
 
         return $role;
+    }
+
+    public function getRolePermissions(Role $role): Role
+    {
+        return $role->load(['permissions' => function ($query) {
+            $query->where('scope', RoleScopeEnum::CENTRAL);
+        }]);
+    }
+
+    public function getAllPermissionsWithAssignment(Role $role): Collection
+    {
+        $rolePermissionIds = $role->permissions->pluck('id');
+
+        return Permission::where('scope', RoleScopeEnum::CENTRAL)
+            ->get()
+            ->map(function (Permission $permission) use ($rolePermissionIds) {
+                $permission->is_assigned = $rolePermissionIds->contains($permission->id);
+
+                return $permission;
+            });
+    }
+
+    public function syncRolePermission(Role $role, array $permissions): void
+    {
+        $role->permissions()->sync($permissions);
     }
 }
