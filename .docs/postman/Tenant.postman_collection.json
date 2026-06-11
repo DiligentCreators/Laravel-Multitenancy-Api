@@ -365,7 +365,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/{{context}}/v1/me/password",
+              "raw": "{{base_url}}/api/{{context}}/v1/me/change-password",
               "host": [
                 "{{base_url}}"
               ],
@@ -374,7 +374,7 @@
                 "{{context}}",
                 "v1",
                 "me",
-                "password"
+                "change-password"
               ]
             }
           },

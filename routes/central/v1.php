@@ -9,6 +9,7 @@ use App\Http\Controllers\Central\Api\V1\DashboardController;
 use App\Http\Controllers\Central\Api\V1\Profile\ProfileController;
 use App\Http\Controllers\Central\Api\V1\RoleController;
 use App\Http\Controllers\Central\Api\V1\TenantController;
+use App\Http\Controllers\Central\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -99,7 +100,7 @@ Route::middleware('auth:central-api')->group(function () {
         Route::post('/', [ProfileController::class, 'update'])->name('update-profile');
 
         // Post /api/central/v1/me/password
-        Route::post('password', [ProfileController::class, 'changePassword'])->name('change-password');
+        Route::post('change-password', [ProfileController::class, 'changePassword'])->name('change-password');
 
         // POST /api/central/v1/me/logout
         Route::post('logout', [ProfileController::class, 'logout'])->name('logout');
@@ -116,12 +117,45 @@ Route::middleware('auth:central-api')->group(function () {
     // POST     /api/central/v1/tenants/{tenant}/restore
     // DELETE   /api/central/v1/tenants/{tenant}/force
     Route::apiResource('tenants', TenantController::class);
-    Route::post('tenants/{tenant}/restore', [TenantController::class, 'restore'])->name('restore');
-    Route::delete('tenants/{tenant}/force', [TenantController::class, 'forceDelete'])->name('force-delete');
+    Route::prefix('tenants/{tenant}')->name('tenants.')->group(function () {
+        Route::post('restore', [TenantController::class, 'restore'])->name('restore');
+        Route::delete('force', [TenantController::class, 'forceDelete'])->name('force-delete');
+    });
 
     // GET      /api/central/v1/roles
     // POST     /api/central/v1/roles
     // GET      /api/central/v1/roles/{role}
     // PUT      /api/central/v1/roles/{role}
     Route::apiResource('roles', RoleController::class);
+
+    // GET      /api/central/v1/users
+    // POST     /api/central/v1/users
+    // GET      /api/central/v1/users/{user}
+    // PUT      /api/central/v1/users/{user}
+    // DELETE   /api/central/v1/users/{user}
+    // POST     /api/central/v1/users/{user}/change-password
+    // POST     /api/central/v1/users/{user}/suspend
+    // POST     /api/central/v1/users/{user}/unsuspend
+    // POST     /api/central/v1/users/{user}/restore
+    // DELETE   /api/central/v1/users/{user}/force
+    Route::apiResource('users', UserController::class);
+    Route::prefix('users/{user}')
+        ->name('users.')
+        ->group(function () {
+
+            Route::post('restore', [UserController::class, 'restore'])
+                ->name('restore');
+
+            Route::delete('force', [UserController::class, 'forceDelete'])
+                ->name('force-delete');
+
+            Route::post('suspend', [UserController::class, 'suspend'])
+                ->name('suspend');
+
+            Route::post('unsuspend', [UserController::class, 'unsuspend'])
+                ->name('unsuspend');
+
+            Route::post('change-password', [UserController::class, 'changePassword'])
+                ->name('change-password');
+        });
 });

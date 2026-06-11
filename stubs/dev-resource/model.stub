@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
         return [];
     }
 
+    /** @param {{ class }} $query */
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
         return parent::resolveRouteBindingQuery($query->withTrashed(), $value, $field);

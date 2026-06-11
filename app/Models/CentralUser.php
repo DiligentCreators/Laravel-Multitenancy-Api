@@ -3,9 +3,14 @@
 namespace App\Models;
 
 use App\Notifications\Central\Auth\ResetPassword;
-use Database\Factories\CentralUserFactory;
+use App\Observers\CentralUserObserver;
+use App\Policies\CentralUserPolicy;
+use Database\Factories\Central\CentralUserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -32,8 +37,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */
+#[UseFactory(CentralUserFactory::class)]
 #[Fillable(['name', 'email', 'password', 'is_suspended'])]
 #[Hidden(['password', 'remember_token'])]
+#[ObservedBy(CentralUserObserver::class)]
+#[UsePolicy(CentralUserPolicy::class)]
 class CentralUser extends Authenticatable
 {
     /** @use HasFactory<CentralUserFactory> */
@@ -53,5 +61,11 @@ class CentralUser extends Authenticatable
             'password' => 'hashed',
             'is_suspended' => 'boolean',
         ];
+    }
+
+    /** @param CentralUser $query */
+    public function resolveRouteBindingQuery($query, $value, $field = null)
+    {
+        return parent::resolveRouteBindingQuery($query->withTrashed(), $value, $field);
     }
 }

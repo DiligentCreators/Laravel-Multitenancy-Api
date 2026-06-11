@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Central;
 
 use App\Models\CentralUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -30,5 +30,17 @@ class CentralUserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Assign a role to the user after creating.
+     *
+     * @param  string  $role
+     */
+    public function withRole($role): static
+    {
+        return $this->afterCreating(function (CentralUser $user) use ($role) {
+            $user->assignRole($role);
+        });
     }
 }
