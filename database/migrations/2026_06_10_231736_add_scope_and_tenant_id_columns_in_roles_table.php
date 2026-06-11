@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('roles', function (Blueprint $table) {
             $table->string('scope')->nullable()->after('guard_name');
             $table->string('tenant_id')->nullable()->after('scope');
+            $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
         });
     }
 
@@ -24,6 +25,7 @@ return new class extends Migration
     {
         Schema::table('roles', function (Blueprint $table) {
             $table->dropColumn('scope');
+            $table->dropForeign(['tenant_id']);
             $table->dropColumn('tenant_id');
         });
     }

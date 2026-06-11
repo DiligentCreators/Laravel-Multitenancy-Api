@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\Central;
 
 use App\Models\Tenant;
-use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -14,6 +13,7 @@ class TenantService
 {
     public function __construct(
         protected Tenant $tenant,
+        protected TenantProvisioningService $provisioningService,
     ) {}
 
     public function query(Request $request): Builder
@@ -86,12 +86,11 @@ class TenantService
     {
         $tenant = $this->tenant->create($data);
 
-        $domain = $tenant->domains()->create([
+        $tenant->domains()->create([
             'domain' => $data['domain'],
         ]);
 
-        $user = User::create([
-            'tenant_id' => $domain->tenant_id,
+        $this->provisioningService->provision($tenant, [
             'username' => $data['username'],
             'name' => $data['name'],
             'email' => $data['email'],
