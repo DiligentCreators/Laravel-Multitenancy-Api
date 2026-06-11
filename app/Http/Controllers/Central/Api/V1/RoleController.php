@@ -69,6 +69,10 @@ class RoleController extends Controller
     {
         Gate::authorize('update', $role);
 
+        if (in_array($role->name, RoleService::protectedRoles())) {
+            return $this->api->error('This role is protected and cannot be modified.', 403);
+        }
+
         $this->roleService->update($role, $request->safe()->except('permissions'));
 
         if ($request->filled('permissions')) {

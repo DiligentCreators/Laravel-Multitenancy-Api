@@ -18,6 +18,11 @@ class RoleService
         protected Role $role,
     ) {}
 
+    public static function protectedRoles(): array
+    {
+        return config('central-protected-roles.protected', []);
+    }
+
     public function query(Request $request): Builder
     {
         return $this->role
@@ -30,6 +35,7 @@ class RoleService
                 });
             })
             ->where('scope', RoleScopeEnum::CENTRAL)
+            ->whereNotIn('name', self::protectedRoles())
             ->orderBy(
                 $request->input('sort', 'created_at'),
                 $request->input('direction', 'desc')
