@@ -250,8 +250,7 @@ stubs/dev-resource/            # Code generation stub templates (16 files)
 - **PHP 8.3+**
 - **Composer**
 - **MySQL 8+** (or MariaDB, PostgreSQL, SQLite)
-- **Node.js 22+** (for frontend asset building)
-- **NPM**
+- **Git**
 - **Git**
 
 ---
@@ -269,7 +268,6 @@ cd Laravel-Multitenancy-Api
 
 ```bash
 composer install
-npm install
 ```
 
 ### 3. Environment Setup
@@ -376,7 +374,7 @@ Use the development server:
 php artisan serve
 ```
 
-Or use the full development environment (server + queue + Vite):
+Or use the development environment with queue:
 
 ```bash
 composer dev
@@ -903,7 +901,7 @@ The project enforces code quality through automated tools:
 | `php artisan tinker`                       | Interactive PHP shell             |
 | `php artisan telescope:install`            | Install Telescope                 |
 | `php artisan pail`                         | Tail application logs             |
-| `composer dev`                             | Full dev environment              |
+| `composer dev`                             | Development server                |
 
 ---
 

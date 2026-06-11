@@ -16,21 +16,7 @@ updates:
         update-types: ['version-update:semver-major']
     security-updates-only: true
 
-  # JavaScript (Node.js) dependencies
-  - package-ecosystem: 'npm'
-    directory: '/' # package.json in root
-    schedule:
-      interval: 'daily'
-      time: '08:00'
-      timezone: 'Asia/Karachi'
-    open-pull-requests-limit: 5
-    labels:
-      - 'dependencies'
-      - 'js'
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
-    security-updates-only: true
+
 
   # GitHub Actions
   - package-ecosystem: 'github-actions'
