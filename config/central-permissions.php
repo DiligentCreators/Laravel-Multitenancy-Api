@@ -9,6 +9,8 @@ return [
         'delete',
         'restore',
         'force.delete',
+        'suspend',
+        'unsuspend',
     ],
     'tenants' => [
         'list',

@@ -97,7 +97,7 @@ Route::middleware('auth:tenant-api')->group(function () {
         Route::post('/', [ProfileController::class, 'update'])->name('update-profile');
 
         // Post /api/v1/me/password
-        Route::post('password', [ProfileController::class, 'changePassword'])->name('change-password');
+        Route::post('change-password', [ProfileController::class, 'changePassword'])->name('change-password');
 
         // POST /api/v1/me/logout
         Route::post('logout', [ProfileController::class, 'logout'])->name('logout');
