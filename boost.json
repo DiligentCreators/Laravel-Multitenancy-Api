@@ -17,8 +17,7 @@
     "mcp": true,
     "nightwatch": false,
     "packages": [
-        "spatie/laravel-permission",
-        "stancl/tenancy"
+        "spatie/laravel-permission"
     ],
     "sail": false,
     "skills": [
