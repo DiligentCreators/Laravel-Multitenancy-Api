@@ -1,0 +1,111 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\Central;
+
+use App\Enums\RoleScopeEnum;
+use App\Models\Permission;
+use App\Models\Tenant;
+use App\Models\Tenant\Role;
+use App\Models\User;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+
+class TenantProvisioningService
+{
+    public function provision(Tenant $tenant, array $userData): User
+    {
+        tenancy()->initialize($tenant);
+
+        $user = DB::transaction(function () use ($tenant, $userData) {
+            $this->createPermissions($tenant->id);
+            $this->createRoles($tenant->id);
+            $this->syncRolePermissions();
+
+            $user = User::create($userData);
+
+            $this->assignSuperadminRole($user, $tenant);
+
+            return $user;
+        });
+
+        tenancy()->end();
+
+        return $user;
+    }
+
+    private function createPermissions(string $tenantId): void
+    {
+        $permissions = config('tenant-permissions');
+
+        foreach ($permissions as $module => $actions) {
+            foreach ($actions as $action) {
+                Permission::create([
+                    'name' => "{$module}.{$action}",
+                    'guard_name' => 'tenant-api',
+                    'scope' => RoleScopeEnum::TENANT,
+                    'tenant_id' => $tenantId,
+                ]);
+            }
+        }
+    }
+
+    private function createRoles(string $tenantId): void
+    {
+        $roles = [
+            ['name' => 'superadmin', 'guard_name' => 'tenant-api', 'scope' => RoleScopeEnum::TENANT, 'tenant_id' => $tenantId],
+            ['name' => 'admin', 'guard_name' => 'tenant-api', 'scope' => RoleScopeEnum::TENANT, 'tenant_id' => $tenantId],
+            ['name' => 'manager', 'guard_name' => 'tenant-api', 'scope' => RoleScopeEnum::TENANT, 'tenant_id' => $tenantId],
+            ['name' => 'staff', 'guard_name' => 'tenant-api', 'scope' => RoleScopeEnum::TENANT, 'tenant_id' => $tenantId],
+        ];
+
+        foreach ($roles as $role) {
+            Role::create($role);
+        }
+    }
+
+    private function syncRolePermissions(): void
+    {
+        $tenantPermissions = Permission::where('guard_name', 'tenant-api')->get();
+
+        $rolePermissions = [
+            'superadmin' => $tenantPermissions,
+            'admin' => $tenantPermissions,
+            'manager' => $tenantPermissions->whereNotIn('name', $this->getExcludedPermissions(['create', 'delete'])),
+            'staff' => $tenantPermissions->whereNotIn('name', $this->getExcludedPermissions(['create', 'update', 'delete'])),
+        ];
+
+        foreach ($rolePermissions as $roleName => $permissions) {
+            $role = Role::where('name', $roleName)
+                ->where('guard_name', 'tenant-api')
+                ->first();
+            if ($role) {
+                $role->syncPermissions($permissions);
+            }
+        }
+    }
+
+    private function getExcludedPermissions(array $excludedParts): Collection
+    {
+        return Permission::where('guard_name', 'tenant-api')
+            ->where(function ($query) use ($excludedParts) {
+                foreach ($excludedParts as $part) {
+                    $query->orWhere('name', 'like', "%{$part}%");
+                }
+            })
+            ->pluck('name');
+    }
+
+    private function assignSuperadminRole(User $user, Tenant $tenant): void
+    {
+        $superadmin = Role::where('name', 'superadmin')
+            ->where('guard_name', 'tenant-api')
+            ->where('tenant_id', $tenant->id)
+            ->first();
+
+        if ($superadmin) {
+            $user->roles()->attach($superadmin->id);
+        }
+    }
+}

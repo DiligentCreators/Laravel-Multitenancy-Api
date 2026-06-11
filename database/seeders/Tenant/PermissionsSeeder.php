@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders\Tenant;
 
+use App\Enums\RoleScopeEnum;
 use App\Models\Permission;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,7 @@ class PermissionsSeeder extends Seeder
                 Permission::firstOrCreate([
                     'name' => "{$module}.{$action}",
                     'guard_name' => 'tenant-api',
+                    'scope' => RoleScopeEnum::TENANT,
                 ]);
             }
         }
