@@ -12,8 +12,12 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read PlanFeature|null $pivot
+ */
 #[UseFactory(FeatureFactory::class)]
 #[ObservedBy(FeatureObserver::class)]
 #[UsePolicy(FeaturePolicy::class)]
@@ -41,5 +45,14 @@ class Feature extends Model
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
         return parent::resolveRouteBindingQuery($query->withTrashed(), $value, $field);
+    }
+
+    public function plans(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Plan::class,
+            'plan_features'
+        )->withPivot('value')
+            ->withTimestamps();
     }
 }

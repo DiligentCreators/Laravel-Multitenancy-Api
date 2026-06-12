@@ -8,6 +8,7 @@ use App\Http\Controllers\Central\Api\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\Central\Api\V1\DashboardController;
 use App\Http\Controllers\Central\Api\V1\FeatureController;
 use App\Http\Controllers\Central\Api\V1\PlanController;
+use App\Http\Controllers\Central\Api\V1\PlanFeatureController;
 use App\Http\Controllers\Central\Api\V1\Profile\ProfileController;
 use App\Http\Controllers\Central\Api\V1\RoleController;
 use App\Http\Controllers\Central\Api\V1\SubscriptionController;
@@ -188,6 +189,18 @@ Route::middleware('auth:central-api')->group(function () {
 
             Route::delete('force', [PlanController::class, 'forceDelete'])
                 ->name('force-delete');
+
+            Route::get('features', [PlanFeatureController::class, 'index'])
+                ->name('features.index');
+
+            Route::post('features', [PlanFeatureController::class, 'store'])
+                ->name('features.store');
+
+            Route::put('features/{feature}', [PlanFeatureController::class, 'update'])
+                ->name('features.update');
+
+            Route::delete('features/{feature}', [PlanFeatureController::class, 'destroy'])
+                ->name('features.destroy');
         });
 
     // GET      /api/central/v1/subscriptions

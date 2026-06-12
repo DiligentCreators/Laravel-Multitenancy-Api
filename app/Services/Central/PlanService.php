@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Central;
 
+use App\Models\Feature;
 use App\Models\Plan;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -71,5 +72,38 @@ class PlanService
         $plan->update($data);
 
         return $plan;
+    }
+
+    public function getFeatures(Plan $plan): Collection
+    {
+        return $plan->features()->get();
+    }
+
+    public function attachFeature(Plan $plan, array $data): Plan
+    {
+        $plan->features()->syncWithoutDetaching([
+            $data['feature_id'] => [
+                'value' => $data['value'],
+            ],
+        ]);
+
+        return $plan->fresh('features');
+    }
+
+    public function updateFeatureValue(Plan $plan, Feature $feature, array $data): Plan
+    {
+        $plan->features()->updateExistingPivot(
+            $feature->id,
+            ['value' => $data['value']],
+        );
+
+        return $plan->fresh('features');
+    }
+
+    public function removeFeature(Plan $plan, Feature $feature): Plan
+    {
+        $plan->features()->detach($feature->id);
+
+        return $plan->fresh('features');
     }
 }
