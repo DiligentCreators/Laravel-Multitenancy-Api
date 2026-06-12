@@ -36,4 +36,11 @@ return [
         'restore',
         'force.delete',
     ],
+    'subscriptions' => [
+        'list',
+        'create',
+        'read',
+        'update',
+        'delete',
+    ],
 ];
