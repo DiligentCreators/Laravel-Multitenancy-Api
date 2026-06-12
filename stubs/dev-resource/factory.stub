@@ -7,9 +7,12 @@ namespace {{ namespace }};
 use App\Models\{{ model }};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<{{ model }}>
+ */
 class {{ class }} extends Factory
 {
-    protected $model = {{ modelNamespace }}::class;
+    protected $model = {{ model }}::class;
 
     public function definition(): array
     {
