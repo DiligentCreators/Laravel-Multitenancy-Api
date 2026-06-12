@@ -6,6 +6,7 @@ use App\Http\Controllers\Central\Api\V1\Auth\ForgotPasswordController;
 use App\Http\Controllers\Central\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Central\Api\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\Central\Api\V1\DashboardController;
+use App\Http\Controllers\Central\Api\V1\FeatureController;
 use App\Http\Controllers\Central\Api\V1\PlanController;
 use App\Http\Controllers\Central\Api\V1\Profile\ProfileController;
 use App\Http\Controllers\Central\Api\V1\RoleController;
@@ -206,5 +207,30 @@ Route::middleware('auth:central-api')->group(function () {
 
             Route::delete('force', [SubscriptionController::class, 'forceDelete'])
                 ->name('force-delete');
+        });
+
+    // GET      /api/central/v1/features
+    // POST     /api/central/v1/features
+    // GET      /api/central/v1/features/{feature}
+    // PUT      /api/central/v1/features/{feature}
+    // DELETE   /api/central/v1/features/{feature}
+    // POST     /api/central/v1/features/{feature}/restore
+    // DELETE   /api/central/v1/features/{feature}/force
+    Route::apiResource('features', FeatureController::class);
+    Route::prefix('features/{feature}')
+        ->name('features.')
+        ->group(function () {
+
+            Route::post('restore', [FeatureController::class, 'restore'])
+                ->name('restore');
+
+            Route::delete('force', [FeatureController::class, 'forceDelete'])
+                ->name('force-delete');
+
+            Route::post('active', [FeatureController::class, 'active'])
+                ->name('active');
+
+            Route::post('inactive', [FeatureController::class, 'inactive'])
+                ->name('inactive');
         });
 });

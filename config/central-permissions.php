@@ -43,4 +43,13 @@ return [
         'update',
         'delete',
     ],
+    'features' => [
+        'list',
+        'create',
+        'read',
+        'update',
+        'delete',
+        'restore',
+        'force.delete',
+    ],
 ];
