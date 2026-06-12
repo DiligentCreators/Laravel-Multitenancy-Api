@@ -13,6 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
+/**
+ * @property-read string $name
+ * @property-read string $email
+ */
 #[UsePolicy(TenantPolicy::class)]
 #[ObservedBy(TenantObserver::class)]
 class Tenant extends BaseTenant
@@ -55,5 +59,10 @@ class Tenant extends BaseTenant
     public function domains()
     {
         return $this->hasMany(Domain::class);
+    }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
     }
 }

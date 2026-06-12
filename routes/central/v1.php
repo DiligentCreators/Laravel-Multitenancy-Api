@@ -9,6 +9,7 @@ use App\Http\Controllers\Central\Api\V1\DashboardController;
 use App\Http\Controllers\Central\Api\V1\PlanController;
 use App\Http\Controllers\Central\Api\V1\Profile\ProfileController;
 use App\Http\Controllers\Central\Api\V1\RoleController;
+use App\Http\Controllers\Central\Api\V1\SubscriptionController;
 use App\Http\Controllers\Central\Api\V1\TenantController;
 use App\Http\Controllers\Central\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
@@ -185,6 +186,25 @@ Route::middleware('auth:central-api')->group(function () {
                 ->name('restore');
 
             Route::delete('force', [PlanController::class, 'forceDelete'])
+                ->name('force-delete');
+        });
+
+    // GET      /api/central/v1/subscriptions
+    // POST     /api/central/v1/subscriptions
+    // GET      /api/central/v1/subscriptions/{subscription}
+    // PUT      /api/central/v1/subscriptions/{subscription}
+    // DELETE   /api/central/v1/subscriptions/{subscription}
+    // POST     /api/central/v1/subscriptions/{subscription}/restore
+    // DELETE   /api/central/v1/subscriptions/{subscription}/force
+    Route::apiResource('subscriptions', SubscriptionController::class);
+    Route::prefix('subscriptions/{subscription}')
+        ->name('subscriptions.')
+        ->group(function () {
+
+            Route::post('restore', [SubscriptionController::class, 'restore'])
+                ->name('restore');
+
+            Route::delete('force', [SubscriptionController::class, 'forceDelete'])
                 ->name('force-delete');
         });
 });
