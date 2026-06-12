@@ -44,7 +44,7 @@ php artisan serve
 | Tenant CRUD                     | ✅     |
 | Roles & Permissions             | ✅     |
 | Central Users                   | ✅     |
-| Plans                           | ⬜     |
+| Plans                           | ✅     |
 | Features                        | ⬜     |
 | Plan Features                   | ⬜     |
 | Subscriptions                   | ⬜     |

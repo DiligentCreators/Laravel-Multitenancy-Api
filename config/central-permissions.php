@@ -26,6 +26,12 @@ return [
         'create',
         'read',
         'update',
+    ],
+    'plans' => [
+        'list',
+        'create',
+        'read',
+        'update',
         'delete',
         'restore',
         'force.delete',
