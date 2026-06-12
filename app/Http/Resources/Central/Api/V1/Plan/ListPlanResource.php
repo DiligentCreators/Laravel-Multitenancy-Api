@@ -23,7 +23,6 @@ class ListPlanResource extends JsonResource
             'trial_days' => $this->trial_days,
             'is_active' => $this->is_active,
             'is_featured' => $this->is_featured,
-            'features' => $this->features,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->deleted_at,

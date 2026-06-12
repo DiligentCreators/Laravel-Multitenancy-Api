@@ -6,9 +6,7 @@ namespace Database\Factories\Central;
 
 use App\Enums\Central\SubscriptionBillingCycleEnum;
 use App\Enums\Central\SubscriptionStatusEnum;
-use App\Models\Plan;
 use App\Models\Subscription;
-use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,8 +19,8 @@ class SubscriptionFactory extends Factory
     public function definition(): array
     {
         return [
-            'tenant_id' => Tenant::inRandomOrder()->first()->id,
-            'plan_id' => Plan::inRandomOrder()->first()->id,
+            'tenant_id' => TenantFactory::new()->create()->id,
+            'plan_id' => PlanFactory::new()->create()->id,
             'starts_at' => now(),
             'ends_at' => now()->addDays(30),
             'billing_cycle' => $this->faker->randomElement(SubscriptionBillingCycleEnum::cases()),

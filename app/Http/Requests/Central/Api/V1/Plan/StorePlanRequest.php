@@ -25,8 +25,6 @@ class StorePlanRequest extends BaseFormRequest
             'trial_days' => ['required', 'integer', 'min:0'],
             'is_active' => ['required', 'boolean'],
             'is_featured' => ['required', 'boolean'],
-            'features' => ['nullable', 'array'],
-            'features.*' => ['required', 'string', 'max:255'],
         ];
     }
 }

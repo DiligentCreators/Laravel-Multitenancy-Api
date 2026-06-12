@@ -25,10 +25,6 @@ class PlanFactory extends Factory
             'trial_days' => $this->faker->numberBetween(0, 30),
             'is_active' => $this->faker->boolean(),
             'is_featured' => $this->faker->boolean(),
-            'features' => $this->faker->randomElements([
-                'feature_1', 'feature_2', 'feature_3', 'feature_4', 'feature_5',
-            ],
-                random_int(1, 4)),
         ];
     }
 

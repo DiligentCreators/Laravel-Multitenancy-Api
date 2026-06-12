@@ -1669,7 +1669,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Starter\", // required\r\n    \"slug\": \"starter\", // required\r\n    \"description\": \"\", // optional\r\n    \"monthly_price\": 9, // optional\r\n    \"yearly_price\": 99, // optional\r\n    \"trial_days\": 0, // optional\r\n    \"is_active\": 1, // optional\r\n    \"is_featured\": 1, // optional\r\n    \"features\": [\r\n        \"feature_1\", \"feature_2\", \"feature_3\", \"feature_4\", \"feature_5\"\r\n    ] // optional\r\n}",
+              "raw": "{\r\n    \"name\": \"Starter\", // required\r\n    \"slug\": \"starter\", // required\r\n    \"description\": \"\", // optional\r\n    \"monthly_price\": 9, // optional\r\n    \"yearly_price\": 99, // optional\r\n    \"trial_days\": 0, // optional\r\n    \"is_active\": 1, // optional\r\n    \"is_featured\": 1 // optional\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1792,7 +1792,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Starter\", // required\r\n    \"slug\": \"starter\", // required\r\n    \"description\": \"\", // optional\r\n    \"monthly_price\": 9, // optional\r\n    \"yearly_price\": 99, // optional\r\n    \"trial_days\": 0, // optional\r\n    \"is_active\": 1, // optional\r\n    \"is_featured\": 1, // optional\r\n    \"features\": [\r\n        \"feature_1\", \"feature_2\", \"feature_3\", \"feature_4\", \"feature_5\"\r\n    ] // optional\r\n}",
+              "raw": "{\r\n    \"name\": \"Starter\", // required\r\n    \"slug\": \"starter\", // required\r\n    \"description\": \"\", // optional\r\n    \"monthly_price\": 9, // optional\r\n    \"yearly_price\": 99, // optional\r\n    \"trial_days\": 0, // optional\r\n    \"is_active\": 1, // optional\r\n    \"is_featured\": 1 // optional\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2328,6 +2328,126 @@
                 "v1",
                 "subscriptions",
                 "{{subscription_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Subscription Restore",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/subscriptions/{{subscription_id}}/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "subscriptions",
+                "{{subscription_id}}",
+                "restore"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Subscription Force Delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/{{context}}/v1/subscriptions/{{subscription_id}}/force",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "{{context}}",
+                "v1",
+                "subscriptions",
+                "{{subscription_id}}",
+                "force"
               ]
             }
           },

@@ -31,7 +31,6 @@ class Plan extends Model
         'trial_days',
         'is_active',
         'is_featured',
-        'features',
     ];
 
     protected function casts(): array
@@ -42,7 +41,6 @@ class Plan extends Model
             'trial_days' => 'integer',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
-            'features' => 'array',
         ];
     }
 
