@@ -6,6 +6,7 @@ use App\Http\Controllers\Central\Api\V1\Auth\ForgotPasswordController;
 use App\Http\Controllers\Central\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Central\Api\V1\Auth\ResetPasswordController;
 use App\Http\Controllers\Central\Api\V1\DashboardController;
+use App\Http\Controllers\Central\Api\V1\PlanController;
 use App\Http\Controllers\Central\Api\V1\Profile\ProfileController;
 use App\Http\Controllers\Central\Api\V1\RoleController;
 use App\Http\Controllers\Central\Api\V1\TenantController;
@@ -70,15 +71,18 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->name('auth.')->group(function () {
 
     // POST /api/central/v1/auth/login
-    Route::post('login', LoginController::class)->name('login');
+    Route::post('login', LoginController::class)
+        ->name('login');
 
     // POST /api/central/v1/auth/forgot-password
-    Route::post('forgot-password', ForgotPasswordController::class)->name('forgot-password');
+    Route::post('forgot-password', ForgotPasswordController::class)
+        ->name('forgot-password');
 
     // POST /api/central/v1/auth/reset-password
     // Body: email, token, password, password_confirmation
     // Response: { message }
-    Route::post('reset-password', ResetPasswordController::class)->name('reset-password');
+    Route::post('reset-password', ResetPasswordController::class)
+        ->name('reset-password');
 });
 
 /*
@@ -97,13 +101,16 @@ Route::middleware('auth:central-api')->group(function () {
         Route::get('/', [ProfileController::class, 'me']);
 
         // Post /api/central/v1/me
-        Route::post('/', [ProfileController::class, 'update'])->name('update-profile');
+        Route::post('/', [ProfileController::class, 'update'])
+            ->name('update-profile');
 
         // Post /api/central/v1/me/password
-        Route::post('change-password', [ProfileController::class, 'changePassword'])->name('change-password');
+        Route::post('change-password', [ProfileController::class, 'changePassword'])
+            ->name('change-password');
 
         // POST /api/central/v1/me/logout
-        Route::post('logout', [ProfileController::class, 'logout'])->name('logout');
+        Route::post('logout', [ProfileController::class, 'logout'])
+            ->name('logout');
     });
 
     // GET  /api/central/v1/dashboard
@@ -118,8 +125,11 @@ Route::middleware('auth:central-api')->group(function () {
     // DELETE   /api/central/v1/tenants/{tenant}/force
     Route::apiResource('tenants', TenantController::class);
     Route::prefix('tenants/{tenant}')->name('tenants.')->group(function () {
-        Route::post('restore', [TenantController::class, 'restore'])->name('restore');
-        Route::delete('force', [TenantController::class, 'forceDelete'])->name('force-delete');
+        Route::post('restore', [TenantController::class, 'restore'])
+            ->name('restore');
+
+        Route::delete('force', [TenantController::class, 'forceDelete'])
+            ->name('force-delete');
     });
 
     // GET      /api/central/v1/roles
@@ -157,5 +167,24 @@ Route::middleware('auth:central-api')->group(function () {
 
             Route::post('change-password', [UserController::class, 'changePassword'])
                 ->name('change-password');
+        });
+
+    // GET      /api/central/v1/plans
+    // POST     /api/central/v1/plans
+    // GET      /api/central/v1/plans/{plan}
+    // PUT      /api/central/v1/plans/{plan}
+    // DELETE   /api/central/v1/plans/{plan}
+    // POST     /api/central/v1/plans/{plan}/restore
+    // DELETE   /api/central/v1/plans/{plan}/force
+    Route::apiResource('plans', PlanController::class);
+    Route::prefix('plans/{plan}')
+        ->name('plans.')
+        ->group(function () {
+
+            Route::post('restore', [PlanController::class, 'restore'])
+                ->name('restore');
+
+            Route::delete('force', [PlanController::class, 'forceDelete'])
+                ->name('force-delete');
         });
 });
