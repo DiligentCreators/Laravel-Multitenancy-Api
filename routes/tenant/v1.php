@@ -39,11 +39,12 @@ use Illuminate\Support\Facades\Route;
 |
  | Available middleware:
  |   - auth:tenant-api            Sanctum auth (tenant guard)
- |   - abilities:{ability}       Sanctum specific ability check
- |   - ability:{a},{b}           Sanctum any-ability check
  |   - can:{permission}          Spatie gate/ability check
  |   - subscription              Ensures tenant has active subscription
  |   - feature:{slug}            Ensures plan has a specific feature
+ |
+ | Authorization uses Spatie Laravel Permission via policies and gates.
+ | Sanctum token abilities are NOT used. See app/Policies/ for policy definitions.
  |
  | Examples:
  |   Route::middleware(['auth:tenant-api', 'subscription'])->group(function () {

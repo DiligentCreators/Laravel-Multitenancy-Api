@@ -42,12 +42,13 @@ use Illuminate\Support\Facades\Route;
 |
 | Auth guard: auth:central-api (authenticates App\Models\CentralUser)
 |
-| Available middleware:
-|   - auth:central-api          Sanctum auth (central guard)
-|   - abilities:{ability}       Sanctum specific ability check
-|   - ability:{a},{b}           Sanctum any-ability check
-|   - can:{permission}          Spatie gate/ability check
-|   - central.domain            Blocks tenant-domain access
+ | Available middleware:
+ |   - auth:central-api          Sanctum auth (central guard)
+ |   - can:{permission}          Spatie gate/ability check
+ |   - central.domain            Blocks tenant-domain access
+ |
+ | Authorization uses Spatie Laravel Permission via policies and gates.
+ | Sanctum token abilities are NOT used. See app/Policies/ for policy definitions.
 |
 |--------------------------------------------------------------------------
 | Central vs Tenant Permission Isolation
