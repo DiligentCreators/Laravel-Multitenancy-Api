@@ -52,4 +52,9 @@ return [
         'restore',
         'force.delete',
     ],
+    'setting-definitions' => [
+        'list',
+        'create',
+        'update',
+    ],
 ];
