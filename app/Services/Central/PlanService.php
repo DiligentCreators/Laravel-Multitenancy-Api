@@ -45,6 +45,7 @@ class PlanService
     public function paginate(Request $request, int $perPage = 15): LengthAwarePaginator
     {
         return $this->query($request)
+            ->with('features')
             ->paginate($perPage)
             ->withQueryString();
     }

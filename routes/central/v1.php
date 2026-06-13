@@ -77,6 +77,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 
     // POST /api/central/v1/auth/login
     Route::post('login', LoginController::class)
+        ->middleware('throttle:auth-login')
         ->name('login');
 
     // POST /api/central/v1/auth/forgot-password

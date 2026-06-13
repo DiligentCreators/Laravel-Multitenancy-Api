@@ -96,10 +96,10 @@ class UserService
         return $user;
     }
 
-    public function changePassword(CentralUser $user): void
+    public function changePassword(CentralUser $user, string $newPassword): void
     {
         $user->update([
-            'password' => bcrypt($user->password),
+            'password' => bcrypt($newPassword),
         ]);
     }
 

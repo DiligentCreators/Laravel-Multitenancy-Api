@@ -22,6 +22,7 @@
     "sail": false,
     "skills": [
         "laravel-best-practices",
+        "configure-nightwatch",
         "pest-testing",
         "laravel-permission-development",
         "deploying-laravel-cloud"

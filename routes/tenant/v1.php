@@ -79,7 +79,9 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->name('auth.')->group(function () {
 
     // POST /api/v1/auth/login
-    Route::post('login', LoginController::class)->name('login');
+    Route::post('login', LoginController::class)
+        ->middleware('throttle:auth-login')
+        ->name('login');
 
     // POST /api/v1/auth/forgot-password
     Route::post('forgot-password', ForgotPasswordController::class)->name('forgot-password');

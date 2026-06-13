@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Central\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Central\Api\V1\User\ChangeUserPasswordRequest;
 use App\Http\Requests\Central\Api\V1\User\StoreUserRequest;
 use App\Http\Requests\Central\Api\V1\User\UpdateUserRequest;
 use App\Http\Resources\Central\Api\V1\User\ListUserResource;
@@ -134,7 +135,7 @@ class UserController extends Controller
         );
     }
 
-    public function changePassword(CentralUser $user): JsonResponse
+    public function changePassword(ChangeUserPasswordRequest $request, CentralUser $user): JsonResponse
     {
         Gate::authorize('update', $user);
 
@@ -142,7 +143,7 @@ class UserController extends Controller
             return $this->api->notFound('Cannot update a deleted user.');
         }
 
-        $this->userService->changePassword($user);
+        $this->userService->changePassword($user, $request->validated()['password']);
 
         return $this->api->success(
             'Password has been changed successfully',

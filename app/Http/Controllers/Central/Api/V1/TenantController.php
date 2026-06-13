@@ -111,6 +111,9 @@ class TenantController extends Controller
 
         $tenant->restore();
 
+        $tenant->users()->onlyTrashed()->restore();
+        $tenant->domains()->onlyTrashed()->restore();
+
         return $this->api->success(
             'Tenant has been restored successfully',
             new TenantResource($tenant),
@@ -124,6 +127,10 @@ class TenantController extends Controller
         if (! $tenant->trashed()) {
             return $this->api->error('Tenant must be deleted before force deleting.', 400);
         }
+
+        $tenant->users()->forceDelete();
+        $tenant->domains()->forceDelete();
+        $tenant->subscriptions()->forceDelete();
 
         $tenant->forceDelete();
 
