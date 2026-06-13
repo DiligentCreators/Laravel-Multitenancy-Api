@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Observers\TenantObserver;
 use App\Policies\TenantPolicy;
+use Carbon\Carbon;
 use Database\Factories\Central\TenantFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -62,14 +63,38 @@ class Tenant extends BaseTenant
         return $this->hasMany(Domain::class);
     }
 
+    /** @return HasMany<Subscription, $this> */
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class);
     }
 
+    /** @return HasOne<Subscription, $this> */
     public function activeSubscription(): HasOne
     {
         return $this->hasOne(Subscription::class)
-            ->where('status', 'active');
+            ->whereIn('status', ['active', 'trial'])
+            ->where(function ($query) {
+                $query->where('ends_at', '>=', Carbon::now())
+                    ->orWhereNull('ends_at');
+            })
+            ->latest('id');
+    }
+
+    public function currentSubscription(): ?Subscription
+    {
+        return $this->subscriptions()
+            ->latest('id')
+            ->first();
+    }
+
+    public function hasActiveSubscription(): bool
+    {
+        return $this->activeSubscription()->exists();
+    }
+
+    public function activePlan(): ?Plan
+    {
+        return $this->activeSubscription?->plan;
     }
 }

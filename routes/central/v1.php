@@ -11,6 +11,7 @@ use App\Http\Controllers\Central\Api\V1\PlanController;
 use App\Http\Controllers\Central\Api\V1\PlanFeatureController;
 use App\Http\Controllers\Central\Api\V1\Profile\ProfileController;
 use App\Http\Controllers\Central\Api\V1\RoleController;
+use App\Http\Controllers\Central\Api\V1\SettingDefinitionController;
 use App\Http\Controllers\Central\Api\V1\SubscriptionController;
 use App\Http\Controllers\Central\Api\V1\TenantController;
 use App\Http\Controllers\Central\Api\V1\UserController;
@@ -246,4 +247,10 @@ Route::middleware('auth:central-api')->group(function () {
             Route::post('inactive', [FeatureController::class, 'inactive'])
                 ->name('inactive');
         });
+
+    // GET      /api/central/v1/setting-definitions
+    // POST     /api/central/v1/setting-definitions
+    // PUT      /api/central/v1/setting-definitions/{setting-definition}
+    Route::apiResource('setting-definitions', SettingDefinitionController::class)
+        ->only(['index', 'store', 'update']);
 });

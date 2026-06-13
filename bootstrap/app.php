@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Middleware\EnsureCentralDomain;
+use App\Http\Middleware\EnsurePlanFeature;
+use App\Http\Middleware\EnsureTenantSubscription;
 use App\Http\Middleware\InitializeTenancy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -30,6 +32,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Flexible tenant resolution (domain → header → input)
             'tenancy' => InitializeTenancy::class,
+
+            // Subscription enforcement
+            'subscription' => EnsureTenantSubscription::class,
+
+            // Plan feature gating — usage: 'feature:users', 'feature:reports'
+            'feature' => EnsurePlanFeature::class,
         ]);
 
         // SPA

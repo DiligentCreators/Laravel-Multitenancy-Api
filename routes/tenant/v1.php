@@ -37,14 +37,25 @@ use Illuminate\Support\Facades\Route;
 |
 | Auth guard: auth:tenant-api (authenticates App\Models\User)
 |
-| Available middleware:
-|   - auth:tenant-api            Sanctum auth (tenant guard)
-|   - abilities:{ability}       Sanctum specific ability check
-|   - ability:{a},{b}           Sanctum any-ability check
-|   - can:{permission}          Spatie gate/ability check
-|
-|--------------------------------------------------------------------------
-| Tenant Permission Context
+ | Available middleware:
+ |   - auth:tenant-api            Sanctum auth (tenant guard)
+ |   - abilities:{ability}       Sanctum specific ability check
+ |   - ability:{a},{b}           Sanctum any-ability check
+ |   - can:{permission}          Spatie gate/ability check
+ |   - subscription              Ensures tenant has active subscription
+ |   - feature:{slug}            Ensures plan has a specific feature
+ |
+ | Examples:
+ |   Route::middleware(['auth:tenant-api', 'subscription'])->group(function () {
+ |       // Protected by active subscription
+ |   });
+ |
+ |   Route::middleware(['auth:tenant-api', 'subscription', 'feature:users'])->group(function () {
+ |       // Protected by active subscription + 'users' plan feature
+ |   });
+ |
+ |--------------------------------------------------------------------------
+ | Tenant Permission Context
 |--------------------------------------------------------------------------
 |
 | All roles and permissions use guard_name = 'tenant-api'. Spatie
@@ -102,7 +113,39 @@ Route::middleware('auth:tenant-api')->group(function () {
         // POST /api/v1/me/logout
         Route::post('logout', [ProfileController::class, 'logout'])->name('logout');
     });
-
-    // GET  /api/v1/dashboard
-    Route::get('dashboard', DashboardController::class)->name('dashboard');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Subscription-Protected Routes
+|--------------------------------------------------------------------------
+|
+| The 'subscription' middleware ensures the tenant has a valid, non-expired,
+| non-suspended subscription before allowing access.
+|
+| The 'feature:{slug}' middleware gates access based on the tenant's plan.
+|
+| Order: auth -> subscription -> feature (if needed)
+|
+*/
+// GET  /api/tenant/v1/dashboard
+Route::get('dashboard', DashboardController::class)
+    ->middleware(['auth:tenant-api', 'subscription'])
+    ->name('dashboard');
+
+/*
+| These routes are gated by both an active subscription AND a specific
+| plan feature. Uncomment and adapt when the corresponding controllers exist.
+|
+| Route::middleware(['auth:tenant-api', 'subscription', 'feature:users'])->group(function () {
+|     Route::apiResource('users', UserController::class);
+| });
+|
+| Route::middleware(['auth:tenant-api', 'subscription', 'feature:contacts'])->prefix('contacts')->group(function () {
+|     Route::apiResource('/', ContactController::class);
+| });
+|
+| Route::middleware(['auth:tenant-api', 'subscription', 'feature:reports'])->prefix('reports')->group(function () {
+|     Route::get('/', [ReportController::class, 'index']);
+| });
+*/

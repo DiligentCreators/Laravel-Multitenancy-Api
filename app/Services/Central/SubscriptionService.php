@@ -6,6 +6,7 @@ namespace App\Services\Central;
 
 use App\Enums\Central\SubscriptionBillingCycleEnum;
 use App\Models\Subscription;
+use App\Models\Tenant;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -91,5 +92,125 @@ class SubscriptionService
         $subscription->update($data);
 
         return $subscription;
+    }
+
+    public function getCurrentSubscription(Tenant $tenant): ?Subscription
+    {
+        return $tenant->currentSubscription();
+    }
+
+    public function hasActiveSubscription(Tenant $tenant): bool
+    {
+        return $tenant->hasActiveSubscription();
+    }
+
+    public function validateSubscription(Tenant $tenant): array
+    {
+        $subscription = $this->getCurrentSubscription($tenant);
+
+        if ($subscription === null) {
+            return [
+                'valid' => false,
+                'status' => 'no_subscription',
+                'message' => 'No active subscription found. Please subscribe to a plan.',
+            ];
+        }
+
+        if ($subscription->isSuspended()) {
+            return [
+                'valid' => false,
+                'status' => 'suspended',
+                'message' => 'Your subscription has been suspended. Please contact support.',
+            ];
+        }
+
+        if ($subscription->isExpired()) {
+            return [
+                'valid' => false,
+                'status' => 'expired',
+                'message' => 'Your subscription has expired. Please renew to continue.',
+            ];
+        }
+
+        if ($subscription->isCancelled()) {
+            return [
+                'valid' => false,
+                'status' => 'cancelled',
+                'message' => 'Your subscription has been cancelled. Please subscribe again.',
+            ];
+        }
+
+        if (! $subscription->isCurrentlyActive()) {
+            return [
+                'valid' => false,
+                'status' => 'inactive',
+                'message' => 'Subscription is not active.',
+            ];
+        }
+
+        return [
+            'valid' => true,
+            'status' => $subscription->status->value,
+            'message' => 'Subscription is active.',
+        ];
+    }
+
+    public function canAccessTenantFeatures(Tenant $tenant): bool
+    {
+        return $this->hasActiveSubscription($tenant);
+    }
+
+    public function hasFeature(Tenant $tenant, string $featureSlug): bool
+    {
+        $plan = $tenant->activePlan();
+
+        if ($plan === null) {
+            return false;
+        }
+
+        return $plan->hasFeature($featureSlug);
+    }
+
+    public function featureValue(Tenant $tenant, string $featureSlug): mixed
+    {
+        $plan = $tenant->activePlan();
+
+        if ($plan === null) {
+            return null;
+        }
+
+        return $plan->getFeatureValue($featureSlug);
+    }
+
+    public function checkFeatureLimit(Tenant $tenant, string $featureSlug, int $currentUsage): array
+    {
+        $limit = $this->featureValue($tenant, $featureSlug);
+
+        if ($limit === null || $limit === false || $limit === '') {
+            return [
+                'allowed' => false,
+                'current' => $currentUsage,
+                'limit' => 0,
+                'message' => "The '{$featureSlug}' feature is not available on your plan.",
+            ];
+        }
+
+        $limitValue = (int) $limit;
+
+        if ($currentUsage >= $limitValue) {
+            return [
+                'allowed' => false,
+                'current' => $currentUsage,
+                'limit' => $limitValue,
+                'message' => "{$featureSlug} limit reached ({$currentUsage}/{$limitValue}). Please upgrade your plan.",
+            ];
+        }
+
+        return [
+            'allowed' => true,
+            'current' => $currentUsage,
+            'limit' => $limitValue,
+            'message' => 'Within limit.',
+        ];
     }
 }
