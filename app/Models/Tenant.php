@@ -29,6 +29,10 @@ class Tenant extends BaseTenant
     protected $fillable = [
         'id',
         'company_name',
+        'name',
+        'username',
+        'email',
+        'password',
         'data',
     ];
 
@@ -37,6 +41,10 @@ class Tenant extends BaseTenant
         return [
             'id',
             'company_name',
+            'name',
+            'username',
+            'email',
+            'password',
             'deleted_at',
             'data',
         ];
