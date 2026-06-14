@@ -17,7 +17,6 @@ class ListRoleResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'guard_name' => $this->guard_name,
-            'scope' => $this->scope,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

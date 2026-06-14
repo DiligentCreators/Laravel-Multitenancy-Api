@@ -19,7 +19,6 @@ class LoginResource extends JsonResource
         // create token
         $token = $user->createToken(
             name: 'central-token',
-            abilities: ['central:*'],
         )->plainTextToken;
 
         return [

@@ -76,6 +76,8 @@ class RoleController extends Controller
         $this->roleService->update($role, $request->safe()->except('permissions'));
 
         if ($request->filled('permissions')) {
+            Gate::authorize('update', $role);
+
             $this->roleService->syncRolePermission($role, $request->input('permissions'));
         }
 

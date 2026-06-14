@@ -10,6 +10,7 @@ use App\Http\Requests\Central\Api\V1\Plan\UpdatePlanRequest;
 use App\Http\Resources\Central\Api\V1\Plan\ListPlanResource;
 use App\Http\Resources\Central\Api\V1\Plan\PlanResource;
 use App\Models\Plan;
+use App\Models\Subscription;
 use App\Services\ApiResponseService;
 use App\Services\Central\PlanService;
 use Illuminate\Http\JsonResponse;
@@ -88,6 +89,13 @@ class PlanController extends Controller
 
         if ($plan->trashed()) {
             return $this->api->notFound('Plan is already deleted.');
+        }
+
+        if (Subscription::where('plan_id', $plan->id)->active()->exists()) {
+            return $this->api->error(
+                'Cannot delete a plan that has active subscriptions. End or cancel related subscriptions first.',
+                409,
+            );
         }
 
         $plan->delete();

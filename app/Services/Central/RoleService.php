@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Central;
 
-use App\Enums\RoleScopeEnum;
 use App\Models\Central\Permission;
 use App\Models\Central\Role;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -27,6 +26,7 @@ class RoleService
     {
         return $this->role
             ->query()
+            ->whereNull('tenant_id')
             ->when($request->filled('search'), function (Builder $query) use ($request) {
                 $search = $request->string('search')->toString();
 
@@ -34,7 +34,6 @@ class RoleService
                     $query->where('id', 'like', "%{$search}%");
                 });
             })
-            ->where('scope', RoleScopeEnum::CENTRAL)
             ->whereNotIn('name', self::protectedRoles())
             ->orderBy(
                 $request->input('sort', 'created_at'),
@@ -75,16 +74,14 @@ class RoleService
 
     public function getRolePermissions(Role $role): Role
     {
-        return $role->load(['permissions' => function ($query) {
-            $query->where('scope', RoleScopeEnum::CENTRAL);
-        }]);
+        return $role->load('permissions');
     }
 
     public function getAllPermissionsWithAssignment(Role $role): Collection
     {
         $rolePermissionIds = $role->permissions->pluck('id');
 
-        return Permission::where('scope', RoleScopeEnum::CENTRAL)
+        return Permission::where('guard_name', 'central-api')
             ->get()
             ->map(function (Permission $permission) use ($rolePermissionIds) {
                 $permission->is_assigned = $rolePermissionIds->contains($permission->id);

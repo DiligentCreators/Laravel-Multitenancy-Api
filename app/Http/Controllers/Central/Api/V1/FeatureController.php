@@ -90,6 +90,13 @@ class FeatureController extends Controller
             return $this->api->notFound('Feature is already deleted.');
         }
 
+        if ($feature->plans()->count() > 0) {
+            return $this->api->error(
+                'Cannot delete a feature that is attached to one or more plans. Remove it from all plans first.',
+                409,
+            );
+        }
+
         $feature->delete();
 
         return $this->api->success(

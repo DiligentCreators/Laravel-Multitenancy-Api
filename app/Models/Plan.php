@@ -64,25 +64,28 @@ class Plan extends Model
 
     public function hasFeature(string $slug): bool
     {
-        $feature = $this->features()
-            ->where('slug', $slug)
-            ->first();
+        /** @var Feature|null $feature */
+        $feature = $this->features->firstWhere('slug', $slug);
 
         if (! $feature) {
             return false;
         }
 
-        return filter_var(
-            $feature->pivot->getAttribute('value'),
-            FILTER_VALIDATE_BOOLEAN
-        );
+        $value = $feature->pivot->getAttribute('value');
+
+        if ($feature->type === 'boolean') {
+            return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        }
+
+        $numeric = is_numeric($value) ? (float) $value : 0;
+
+        return $numeric > 0;
     }
 
     public function getFeatureValue(string $slug): mixed
     {
-        $feature = $this->features()
-            ->where('slug', $slug)
-            ->first();
+        /** @var Feature|null $feature */
+        $feature = $this->features->firstWhere('slug', $slug);
 
         return $feature?->pivot->getAttribute('value');
     }

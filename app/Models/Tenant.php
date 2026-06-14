@@ -29,6 +29,11 @@ class Tenant extends BaseTenant
     protected $fillable = [
         'id',
         'company_name',
+        'name',
+        'username',
+        'email',
+        'password',
+        'data',
     ];
 
     public static function getCustomColumns(): array
@@ -36,8 +41,59 @@ class Tenant extends BaseTenant
         return [
             'id',
             'company_name',
+            'name',
+            'username',
+            'email',
+            'password',
             'deleted_at',
+            'data',
         ];
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'data' => 'array',
+        ];
+    }
+
+    public function getSetting(string $key, mixed $default = null): mixed
+    {
+        return data_get($this->data, $key, $default);
+    }
+
+    public function setSetting(string $key, mixed $value): void
+    {
+        $data = $this->data ?? [];
+        data_set($data, $key, $value);
+        $this->data = $data;
+        $this->save();
+    }
+
+    public function getBrandingConfig(): array
+    {
+        return $this->getSetting('branding', [
+            'logo_url' => null,
+            'primary_color' => null,
+            'favicon_url' => null,
+        ]);
+    }
+
+    public function getLocalizationConfig(): array
+    {
+        return $this->getSetting('localization', [
+            'locale' => config('app.locale', 'en'),
+            'timezone' => config('app.timezone', 'UTC'),
+            'date_format' => 'Y-m-d',
+        ]);
+    }
+
+    public function getNotificationConfig(): array
+    {
+        return $this->getSetting('notifications', [
+            'email' => true,
+            'in_app' => true,
+        ]);
     }
 
     protected static function newFactory(): TenantFactory

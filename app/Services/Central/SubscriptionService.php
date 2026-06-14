@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Central;
 
 use App\Enums\Central\SubscriptionBillingCycleEnum;
+use App\Enums\Central\SubscriptionStatusEnum;
+use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Tenant;
 use Carbon\Carbon;
@@ -47,6 +49,7 @@ class SubscriptionService
     public function paginate(Request $request, int $perPage = 15): LengthAwarePaginator
     {
         return $this->query($request)
+            ->with('tenant', 'plan')
             ->paginate($perPage)
             ->withQueryString();
     }
@@ -66,6 +69,20 @@ class SubscriptionService
 
     public function create(array $data): Subscription
     {
+        $status = SubscriptionStatusEnum::tryFrom($data['status'] ?? 'trial');
+
+        if ($status !== null && $status->isValidForAccess()) {
+            $activeExists = $this->subscription
+                ->query()
+                ->where('tenant_id', $data['tenant_id'])
+                ->active()
+                ->exists();
+
+            if ($activeExists) {
+                throw new \RuntimeException('Tenant already has an active subscription. Cancel or end it before creating a new one.');
+            }
+        }
+
         $billingCycle = $data['billing_cycle'];
 
         $startsAt = Carbon::parse($data['starts_at']);
@@ -212,5 +229,72 @@ class SubscriptionService
             'limit' => $limitValue,
             'message' => 'Within limit.',
         ];
+    }
+
+    public function cancel(Subscription $subscription, ?Carbon $at = null): Subscription
+    {
+        if ($subscription->isCancelled()) {
+            throw new \RuntimeException('Subscription is already cancelled.');
+        }
+
+        $subscription->update([
+            'status' => SubscriptionStatusEnum::CANCELLED,
+            'ends_at' => $at ?? $subscription->ends_at ?? Carbon::now(),
+        ]);
+
+        return $subscription->fresh();
+    }
+
+    public function renew(Subscription $subscription, ?Plan $newPlan = null): Subscription
+    {
+        $plan = $newPlan ?? $subscription->plan;
+
+        $startsAt = Carbon::now();
+        $endsAt = $subscription->billing_cycle === SubscriptionBillingCycleEnum::YEARLY
+            ? $startsAt->copy()->addYear()
+            : $startsAt->copy()->addMonth();
+
+        $subscription->update([
+            'plan_id' => $plan->id,
+            'status' => SubscriptionStatusEnum::ACTIVE,
+            'starts_at' => $startsAt,
+            'ends_at' => $endsAt,
+        ]);
+
+        return $subscription->fresh();
+    }
+
+    public function isTrialAvailable(Tenant $tenant, Plan $plan): bool
+    {
+        if ($plan->trial_days <= 0) {
+            return false;
+        }
+
+        return ! $this->subscription
+            ->query()
+            ->where('tenant_id', $tenant->id)
+            ->where('plan_id', $plan->id)
+            ->where('status', SubscriptionStatusEnum::TRIAL)
+            ->exists();
+    }
+
+    public function expire(string $tenantId): ?Subscription
+    {
+        $subscription = $this->subscription
+            ->query()
+            ->where('tenant_id', $tenantId)
+            ->active()
+            ->where('ends_at', '<', Carbon::now())
+            ->first();
+
+        if ($subscription === null) {
+            return null;
+        }
+
+        $subscription->update([
+            'status' => SubscriptionStatusEnum::EXPIRED,
+        ]);
+
+        return $subscription->fresh();
     }
 }

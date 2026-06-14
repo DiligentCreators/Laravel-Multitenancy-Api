@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureCentralDomain;
+use App\Http\Middleware\EnsureGuardMatches;
 use App\Http\Middleware\EnsurePlanFeature;
 use App\Http\Middleware\EnsureTenantSubscription;
 use App\Http\Middleware\InitializeTenancy;
@@ -8,9 +9,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
-use Laravel\Sanctum\Http\Middleware\CheckAbilities;
-use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -22,13 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Sanctum ability middleware
         $middleware->alias([
-            'abilities' => CheckAbilities::class,
-            'ability' => CheckForAnyAbility::class,
-
             // Central domain guard — blocks tenant-domain access
             'central.domain' => EnsureCentralDomain::class,
+
+            // Guard-forcing middleware — ensures the correct auth guard
+            'guard' => EnsureGuardMatches::class,
 
             // Flexible tenant resolution (domain → header → input)
             'tenancy' => InitializeTenancy::class,
@@ -61,6 +60,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'message' => __('Access denied.'),
                 ], 403);
+            }
+        });
+
+        $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => __('Too many requests. Please try again after a few minutes.'),
+                ], 429);
             }
         });
 

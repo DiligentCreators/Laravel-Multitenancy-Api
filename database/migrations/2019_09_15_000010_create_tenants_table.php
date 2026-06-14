@@ -17,10 +17,10 @@ class CreateTenantsTable extends Migration
             $table->string('id')->primary();
 
             $table->string('company_name')->nullable();
-            // $table->string('name')->nullable();
-            // $table->string('username')->unique();
-            // $table->string('email')->unique();
-            // $table->string('password')->nullable();
+            $table->string('name')->nullable();
+            $table->string('username')->unique();
+            $table->string('email')->unique();
+            $table->string('password')->nullable();
             // Above fields required for login purposes
 
             // $table->string('phone')->nullable();

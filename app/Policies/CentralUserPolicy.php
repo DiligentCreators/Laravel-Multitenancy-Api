@@ -23,7 +23,7 @@ class CentralUserPolicy
     public function view(CentralUser $centralUser, CentralUser $target): bool
     {
         if ($centralUser->id === $target->id) {
-            return false;
+            return true;
         }
 
         if ($this->isProtected($target)) {

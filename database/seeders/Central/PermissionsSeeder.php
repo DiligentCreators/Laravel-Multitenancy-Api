@@ -2,7 +2,6 @@
 
 namespace Database\Seeders\Central;
 
-use App\Enums\RoleScopeEnum;
 use App\Models\Central\Permission;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +29,6 @@ class PermissionsSeeder extends Seeder
                 Permission::firstOrCreate([
                     'name' => "{$module}.{$action}",
                     'guard_name' => 'central-api',
-                    'scope' => RoleScopeEnum::CENTRAL,
                 ]);
             }
         }

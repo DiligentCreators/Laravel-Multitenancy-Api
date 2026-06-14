@@ -21,6 +21,18 @@ class LoginController extends Controller
             );
         }
 
+        if ($user->trashed()) {
+            return $this->api->error(
+                message: 'The provided credentials are incorrect.',
+            );
+        }
+
+        if ($user->is_suspended) {
+            return $this->api->error(
+                message: 'The provided credentials are incorrect.',
+            );
+        }
+
         return $this->api->success(
             message: 'Login successful',
             data: new LoginResource($user)

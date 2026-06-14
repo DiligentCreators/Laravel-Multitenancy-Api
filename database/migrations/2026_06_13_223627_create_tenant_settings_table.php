@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('tenant_settings', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('tenant_id')
-                ->constrained()
-                ->cascadeOnDelete();
+            $table->string('tenant_id');
+            $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
 
             $table->foreignId('setting_definition_id')
                 ->constrained()

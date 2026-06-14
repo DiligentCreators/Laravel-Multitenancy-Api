@@ -38,7 +38,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Illuminate\Support\Carbon $updated_at
  * @property-read Tenant $tenant
  */
-#[Fillable(['tenant_id', 'username', 'name', 'email', 'password'])]
+#[Fillable(['tenant_id', 'username', 'name', 'email', 'password', 'is_suspended'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -49,6 +49,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_suspended' => 'boolean',
             'password' => 'hashed',
         ];
     }

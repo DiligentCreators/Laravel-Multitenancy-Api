@@ -57,6 +57,7 @@ class TenantService
         int $perPage = 15
     ): LengthAwarePaginator {
         return $this->query($request)
+            ->with(['users' => fn ($q) => $q->withTrashed(), 'domains' => fn ($q) => $q->withTrashed()])
             ->paginate($perPage)
             ->withQueryString();
     }

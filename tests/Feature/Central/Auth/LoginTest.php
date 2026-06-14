@@ -47,8 +47,11 @@ it('fails with non-existent email', function () {
         'password' => 'password',
     ]);
 
-    $response->assertStatus(422)
-        ->assertJsonValidationErrors(['email']);
+    $response->assertStatus(400)
+        ->assertJson([
+            'status' => 'error',
+            'message' => 'The provided credentials are incorrect.',
+        ]);
 });
 
 it('fails with missing email and password', function () {

@@ -18,6 +18,9 @@ class TenantFactory extends Factory
     {
         return [
             'company_name' => $this->faker->company(),
+            'username' => $this->faker->userName(),
+            'name' => $this->faker->company(),
+            'email' => $this->faker->unique()->safeEmail(),
         ];
     }
 

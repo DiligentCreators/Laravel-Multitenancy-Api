@@ -1,32 +1,22 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
+/**
+ * Superseded by 2026_06_14_001535_refactor_permissions_and_roles_schema.
+ *
+ * The tenant_id column was originally added here but is now part of the
+ * base Spatie migration. The scope column was removed entirely.
+ */
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::table('roles', function (Blueprint $table) {
-            $table->string('scope')->nullable()->after('guard_name');
-            $table->string('tenant_id')->nullable()->after('scope');
-            $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
-        });
+        // No-op: schema handled by the refactoring migration.
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::table('roles', function (Blueprint $table) {
-            $table->dropColumn('scope');
-            $table->dropForeign(['tenant_id']);
-            $table->dropColumn('tenant_id');
-        });
+        // No-op: see refactoring migration for reversal.
     }
 };
