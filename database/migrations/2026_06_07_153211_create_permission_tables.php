@@ -37,17 +37,22 @@ return new class extends Migration
          */
         Schema::create($tableNames['roles'], static function (Blueprint $table) use ($teams, $columnNames) {
             $table->id(); // role id
-            if ($teams || config('permission.testing')) { // permission.testing is a fix for sqlite testing
+            if ($teams || config('permission.testing')) {
                 $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
                 $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
             }
             $table->string('name');
             $table->string('guard_name');
+            $table->string('tenant_id', 36)->nullable();
             $table->timestamps();
+
+            // tenant_id reference to tenants table (nullable for central roles)
+            $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
+
             if ($teams || config('permission.testing')) {
                 $table->unique([$columnNames['team_foreign_key'], 'name', 'guard_name']);
             } else {
-                $table->unique(['name', 'guard_name']);
+                $table->unique(['tenant_id', 'name', 'guard_name'], 'roles_tenant_id_name_guard_name_unique');
             }
         });
 

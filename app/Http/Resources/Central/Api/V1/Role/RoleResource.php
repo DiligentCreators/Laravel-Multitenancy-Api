@@ -13,8 +13,10 @@ use Illuminate\Support\Collection;
 /** @mixin Role */
 class RoleResource extends JsonResource
 {
+    /** @var null|Collection<int, Permission> */
     protected ?Collection $allPermissions = null;
 
+    /** @param null|Collection<int, Permission> $allPermissions */
     public function __construct($resource, ?Collection $allPermissions = null)
     {
         parent::__construct($resource);
@@ -28,7 +30,6 @@ class RoleResource extends JsonResource
             'id' => $permission->id,
             'name' => $permission->name,
             'guard_name' => $permission->guard_name,
-            'scope' => $permission->scope,
             'is_assigned' => $permission->is_assigned,
         ]);
 
@@ -36,7 +37,6 @@ class RoleResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'guard_name' => $this->guard_name,
-            'scope' => $this->scope,
             'permissions' => $permissions,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

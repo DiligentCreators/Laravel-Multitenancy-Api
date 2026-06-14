@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Central;
 
-use App\Enums\RoleScopeEnum;
 use App\Models\Permission;
 use App\Models\Tenant;
 use App\Models\Tenant\Role;
@@ -19,7 +18,7 @@ class TenantProvisioningService
         tenancy()->initialize($tenant);
 
         $user = DB::transaction(function () use ($tenant, $userData) {
-            $this->createPermissions($tenant->id);
+            $this->createPermissions();
             $this->createRoles($tenant->id);
             $this->syncRolePermissions();
 
@@ -35,17 +34,15 @@ class TenantProvisioningService
         return $user;
     }
 
-    private function createPermissions(string $tenantId): void
+    private function createPermissions(): void
     {
         $permissions = config('tenant-permissions');
 
         foreach ($permissions as $module => $actions) {
             foreach ($actions as $action) {
-                Permission::create([
+                Permission::firstOrCreate([
                     'name' => "{$module}.{$action}",
                     'guard_name' => 'tenant-api',
-                    'scope' => RoleScopeEnum::TENANT,
-                    'tenant_id' => $tenantId,
                 ]);
             }
         }
@@ -54,14 +51,14 @@ class TenantProvisioningService
     private function createRoles(string $tenantId): void
     {
         $roles = [
-            ['name' => 'superadmin', 'guard_name' => 'tenant-api', 'scope' => RoleScopeEnum::TENANT, 'tenant_id' => $tenantId],
-            ['name' => 'admin', 'guard_name' => 'tenant-api', 'scope' => RoleScopeEnum::TENANT, 'tenant_id' => $tenantId],
-            ['name' => 'manager', 'guard_name' => 'tenant-api', 'scope' => RoleScopeEnum::TENANT, 'tenant_id' => $tenantId],
-            ['name' => 'staff', 'guard_name' => 'tenant-api', 'scope' => RoleScopeEnum::TENANT, 'tenant_id' => $tenantId],
+            ['name' => 'superadmin', 'guard_name' => 'tenant-api', 'tenant_id' => $tenantId],
+            ['name' => 'admin', 'guard_name' => 'tenant-api', 'tenant_id' => $tenantId],
+            ['name' => 'manager', 'guard_name' => 'tenant-api', 'tenant_id' => $tenantId],
+            ['name' => 'staff', 'guard_name' => 'tenant-api', 'tenant_id' => $tenantId],
         ];
 
         foreach ($roles as $role) {
-            Role::create($role);
+            Role::firstOrCreate($role);
         }
     }
 
