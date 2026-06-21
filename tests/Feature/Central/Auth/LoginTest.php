@@ -36,7 +36,7 @@ it('fails with incorrect password', function () {
 
     $response->assertStatus(400)
         ->assertJson([
-            'status' => 'error',
+            'status' => false,
             'message' => 'The provided credentials are incorrect.',
         ]);
 });
@@ -49,7 +49,7 @@ it('fails with non-existent email', function () {
 
     $response->assertStatus(400)
         ->assertJson([
-            'status' => 'error',
+            'status' => false,
             'message' => 'The provided credentials are incorrect.',
         ]);
 });

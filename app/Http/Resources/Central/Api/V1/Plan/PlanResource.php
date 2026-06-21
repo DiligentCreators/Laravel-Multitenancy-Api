@@ -23,7 +23,9 @@ class PlanResource extends JsonResource
             'trial_days' => $this->trial_days,
             'is_active' => $this->is_active,
             'is_featured' => $this->is_featured,
-            'features' => PlanFeatureResource::collection($this->features),
+            'features' => $this->when($this->relationLoaded('features'), function () {
+                return PlanFeatureResource::collection($this->features);
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

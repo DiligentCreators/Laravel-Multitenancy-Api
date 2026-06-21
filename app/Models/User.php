@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Searchable;
 use Spatie\Permission\Traits\HasRoles;
 
 /*
@@ -43,7 +44,9 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use BelongsToTenant, HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
+    use BelongsToTenant, HasApiTokens, HasFactory, HasRoles, Notifiable, Searchable, SoftDeletes;
+
+    protected $guard_name = 'tenant-api';
 
     protected function casts(): array
     {
@@ -65,5 +68,12 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token): void
     {
         $this->notify(new ResetPassword($token));
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+        ];
     }
 }

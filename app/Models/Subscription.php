@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 #[UseFactory(SubscriptionFactory::class)]
 #[ObservedBy(SubscriptionObserver::class)]
@@ -33,7 +34,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Subscription extends Model
 {
     /** @use HasFactory<SubscriptionFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, Searchable, SoftDeletes;
 
     protected $fillable = [
         'tenant_id',
@@ -127,5 +128,12 @@ class Subscription extends Model
     public function scopeTrial(Builder $query): Builder
     {
         return $query->where('status', SubscriptionStatusEnum::TRIAL);
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+        ];
     }
 }
