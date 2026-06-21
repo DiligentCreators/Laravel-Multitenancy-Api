@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Laravel\Scout\Searchable;
 use Spatie\Permission\Traits\HasRoles;
 
 /*
@@ -46,18 +45,9 @@ use Spatie\Permission\Traits\HasRoles;
 class CentralUser extends Authenticatable
 {
     /** @use HasFactory<CentralUserFactory> */
-    use HasApiTokens, HasFactory, HasRoles, Notifiable, Searchable, SoftDeletes;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     protected $table = 'central_users';
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-        ];
-    }
 
     public function sendPasswordResetNotification($token): void
     {

@@ -86,9 +86,9 @@ class TenantProvisioningService
     private function getExcludedPermissions(array $excludedParts): Collection
     {
         return Permission::where('guard_name', 'tenant-api')
-            ->where(function ($q) use ($excludedParts) {
+            ->where(function ($query) use ($excludedParts) {
                 foreach ($excludedParts as $part) {
-                    $q->where('name', 'like', "%.{$part}");
+                    $query->orWhere('name', 'like', "%{$part}%");
                 }
             })
             ->pluck('name');

@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 
@@ -25,7 +24,7 @@ use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 class Tenant extends BaseTenant
 {
     /** @use HasFactory<TenantFactory> */
-    use HasDomains, HasFactory, Searchable, SoftDeletes;
+    use HasDomains, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'id',
@@ -35,7 +34,6 @@ class Tenant extends BaseTenant
         'email',
         'password',
         'data',
-        'credit_balance',
     ];
 
     public static function getCustomColumns(): array
@@ -49,14 +47,6 @@ class Tenant extends BaseTenant
             'password',
             'deleted_at',
             'data',
-            'credit_balance',
-            'stripe_id',
-            'stripe_customer_email',
-            'card_brand',
-            'card_last_four',
-            'trial_ends_at',
-            'stripe_account_id',
-            'stripe_account_enabled',
         ];
     }
 
@@ -135,18 +125,6 @@ class Tenant extends BaseTenant
         return $this->hasMany(Subscription::class);
     }
 
-    /** @return HasMany<Invoice, $this> */
-    public function invoices(): HasMany
-    {
-        return $this->hasMany(Invoice::class);
-    }
-
-    /** @return HasMany<Payment, $this> */
-    public function payments(): HasMany
-    {
-        return $this->hasMany(Payment::class);
-    }
-
     /** @return HasOne<Subscription, $this> */
     public function activeSubscription(): HasOne
     {
@@ -174,13 +152,5 @@ class Tenant extends BaseTenant
     public function activePlan(): ?Plan
     {
         return $this->activeSubscription?->plan;
-    }
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'company_name' => $this->company_name,
-        ];
     }
 }

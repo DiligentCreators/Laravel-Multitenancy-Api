@@ -21,10 +21,8 @@
     ],
     "sail": false,
     "skills": [
-        "cashier-stripe-development",
         "laravel-best-practices",
         "configure-nightwatch",
-        "scout-development",
         "pest-testing",
         "laravel-permission-development",
         "deploying-laravel-cloud"

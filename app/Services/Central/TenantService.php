@@ -8,17 +8,9 @@ use App\Models\Tenant;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TenantService
 {
-    private const ALLOWED_SORT_COLUMNS = [
-        'id', 'company_name', 'name', 'username', 'email',
-        'credit_balance', 'created_at', 'updated_at',
-    ];
-
-    private const ALLOWED_DIRECTIONS = ['asc', 'desc'];
-
     public function __construct(
         protected Tenant $tenant,
         protected TenantProvisioningService $provisioningService,
@@ -26,20 +18,25 @@ class TenantService
 
     public function query(Request $request): Builder
     {
-        $sort = in_array($request->input('sort', 'created_at'), self::ALLOWED_SORT_COLUMNS, true)
-            ? $request->input('sort', 'created_at')
-            : 'created_at';
-
-        $direction = in_array($request->input('direction', 'desc'), self::ALLOWED_DIRECTIONS, true)
-            ? $request->input('direction', 'desc')
-            : 'desc';
-
         return $this->tenant
             ->query()
             ->when($request->filled('search'), function (Builder $query) use ($request) {
                 $search = $request->string('search')->toString();
-                $ids = Tenant::search($search)->keys();
-                $query->whereIn((new Tenant)->getQualifiedKeyName(), $ids);
+
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('company_name', 'like', "%{$search}%")
+                        ->orWhere('id', 'like', "%{$search}%")
+                        ->orWhereHas('users', function (Builder $query) use ($search) {
+                            $query->whereAny([
+                                'name',
+                                'username',
+                                'email',
+                            ], 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('domains', function (Builder $query) use ($search) {
+                            $query->where('domain', 'like', "%{$search}%");
+                        });
+                });
             })
             ->when(
                 $request->input('trashed') === 'true',
@@ -49,7 +46,10 @@ class TenantService
                 $request->input('trashed') === 'only',
                 fn (Builder $query) => $query->onlyTrashed()
             )
-            ->orderBy($sort, $direction);
+            ->orderBy(
+                $request->input('sort', 'created_at'),
+                $request->input('direction', 'desc')
+            );
     }
 
     public function paginate(
@@ -85,45 +85,41 @@ class TenantService
 
     public function create(array $data): Tenant
     {
-        return DB::transaction(function () use ($data) {
-            $tenant = $this->tenant->create($data);
+        $tenant = $this->tenant->create($data);
 
-            $tenant->domains()->create([
-                'domain' => $data['domain'],
-            ]);
+        $tenant->domains()->create([
+            'domain' => $data['domain'],
+        ]);
 
-            $this->provisioningService->provision($tenant, [
-                'username' => $data['username'],
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => bcrypt($data['password']),
-            ]);
+        $this->provisioningService->provision($tenant, [
+            'username' => $data['username'],
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+        ]);
 
-            return $tenant;
-        });
+        return $tenant;
     }
 
     public function update(Tenant $tenant, array $data): Tenant
     {
-        return DB::transaction(function () use ($tenant, $data) {
-            $tenant->update($data);
+        $tenant->update($data);
 
-            $domain = $tenant->load('domains');
+        $domain = $tenant->load('domains');
 
-            $domain->domains()->first()->update([
-                'domain' => $data['domain'],
-            ]);
+        $domain->domains()->first()->update([
+            'domain' => $data['domain'],
+        ]);
 
-            $user = $tenant->users()->first();
+        $user = $tenant->users()->first();
 
-            $user->update([
-                'username' => $data['username'],
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => bcrypt($data['password']),
-            ]);
+        $user->update([
+            'username' => $data['username'],
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+        ]);
 
-            return $tenant;
-        });
+        return $tenant;
     }
 }

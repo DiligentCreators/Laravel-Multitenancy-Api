@@ -137,30 +137,6 @@ Route::get('dashboard', DashboardController::class)
     ->name('dashboard');
 
 /*
-|--------------------------------------------------------------------------
-| CRM Core Routes
-|--------------------------------------------------------------------------
-|
-| All CRM routes are protected by auth:tenant-api and subscription.
-| Individual feature gating is handled within each endpoint.
-|
-*/
-Route::middleware(['auth:tenant-api', 'subscription'])->group(function () {
-    require base_path('routes/tenant/crm-v1.php');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Portal Routes
-|--------------------------------------------------------------------------
-|
-| Portal routes handle both unauthenticated (auth) and authenticated
-| (auth:portal-api) requests for the client portal.
-|
-*/
-require base_path('routes/tenant/portal-v1.php');
-
-/*
 | These routes are gated by both an active subscription AND a specific
 | plan feature. Uncomment and adapt when the corresponding controllers exist.
 |
@@ -175,4 +151,4 @@ require base_path('routes/tenant/portal-v1.php');
 | Route::middleware(['auth:tenant-api', 'subscription', 'feature:reports'])->prefix('reports')->group(function () {
 |     Route::get('/', [ReportController::class, 'index']);
 | });
- */
+*/

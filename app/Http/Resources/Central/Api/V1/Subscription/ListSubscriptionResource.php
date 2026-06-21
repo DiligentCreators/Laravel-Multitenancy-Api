@@ -22,19 +22,15 @@ class ListSubscriptionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'tenant' => $this->when($this->relationLoaded('tenant'), function () {
-                return [
-                    'id' => $this->tenant_id,
-                    'name' => $this->tenant->name,
-                    'email' => $this->tenant->email,
-                ];
-            }),
-            'plan' => $this->when($this->relationLoaded('plan'), function () {
-                return [
-                    'id' => $this->plan_id,
-                    'name' => $this->plan->name,
-                ];
-            }),
+            'tenant' => [
+                'id' => $this->tenant_id,
+                'name' => $this->tenant->name,
+                'email' => $this->tenant->email,
+            ],
+            'plan' => [
+                'id' => $this->plan_id,
+                'name' => $this->plan->name,
+            ],
             'starts_at' => $this->starts_at,
             'ends_at' => $this->ends_at,
             'billing_cycle' => $this->billing_cycle->label(),
