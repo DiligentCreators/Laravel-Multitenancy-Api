@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
-use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,11 +23,8 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->environment('local') && class_exists(TelescopeServiceProvider::class)) {
             $this->app->register(TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
         }
-
-        $this->app->singleton(StripeClient::class, function () {
-            return new StripeClient(config('services.stripe.secret'));
-        });
     }
 
     /**

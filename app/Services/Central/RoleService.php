@@ -13,12 +13,6 @@ use Illuminate\Support\Collection;
 
 class RoleService
 {
-    private const ALLOWED_SORT_COLUMNS = [
-        'id', 'name', 'guard_name', 'created_at', 'updated_at',
-    ];
-
-    private const ALLOWED_DIRECTIONS = ['asc', 'desc'];
-
     public function __construct(
         protected Role $role,
     ) {}
@@ -30,25 +24,21 @@ class RoleService
 
     public function query(Request $request): Builder
     {
-        $sort = in_array($request->input('sort', 'created_at'), self::ALLOWED_SORT_COLUMNS, true)
-            ? $request->input('sort', 'created_at')
-            : 'created_at';
-
-        $direction = in_array($request->input('direction', 'desc'), self::ALLOWED_DIRECTIONS, true)
-            ? $request->input('direction', 'desc')
-            : 'desc';
-
         return $this->role
             ->query()
             ->whereNull('tenant_id')
             ->when($request->filled('search'), function (Builder $query) use ($request) {
                 $search = $request->string('search')->toString();
 
-                $ids = Role::search($search)->keys();
-                $query->whereIn((new Role)->getQualifiedKeyName(), $ids);
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('id', 'like', "%{$search}%");
+                });
             })
             ->whereNotIn('name', self::protectedRoles())
-            ->orderBy($sort, $direction);
+            ->orderBy(
+                $request->input('sort', 'created_at'),
+                $request->input('direction', 'desc')
+            );
     }
 
     public function paginate(Request $request, int $perPage = 15): LengthAwarePaginator

@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\CentralUser;
-use App\Models\Crm\PortalUser;
 use App\Models\User;
 
 return [
@@ -62,15 +61,6 @@ return [
             'driver' => 'sanctum',
             'provider' => 'users',
         ],
-
-        /*
-         * Portal API guard — authenticates PortalUser (portal_users table, tenant-scoped).
-         * Used on portal routes: Route::middleware('auth:portal-api')
-         */
-        'portal-api' => [
-            'driver' => 'sanctum',
-            'provider' => 'portal_users',
-        ],
     ],
 
     /*
@@ -95,11 +85,6 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
-        ],
-
-        'portal_users' => [
-            'driver' => 'eloquent',
-            'model' => PortalUser::class,
         ],
     ],
 
@@ -133,13 +118,6 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-
-        'portal_users' => [
-            'provider' => 'portal_users',
-            'table' => 'portal_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

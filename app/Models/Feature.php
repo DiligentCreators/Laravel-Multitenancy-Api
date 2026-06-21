@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 
 /**
  * @property-read PlanFeature|null $pivot
@@ -25,7 +24,7 @@ use Laravel\Scout\Searchable;
 class Feature extends Model
 {
     /** @use HasFactory<FeatureFactory> */
-    use HasFactory, Searchable, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -55,12 +54,5 @@ class Feature extends Model
             'plan_features'
         )->withPivot('value')
             ->withTimestamps();
-    }
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-        ];
     }
 }

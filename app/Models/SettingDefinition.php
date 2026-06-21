@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Scout\Searchable;
 
 #[UseFactory(SettingDefinitionFactory::class)]
 #[ObservedBy(SettingDefinitionObserver::class)]
@@ -20,7 +19,7 @@ use Laravel\Scout\Searchable;
 class SettingDefinition extends Model
 {
     /** @use HasFactory<SettingDefinitionFactory> */
-    use HasFactory, Searchable;
+    use HasFactory;
 
     protected $fillable = [
         'group',
@@ -49,12 +48,5 @@ class SettingDefinition extends Model
     protected static function newFactory()
     {
         return SettingDefinitionFactory::new();
-    }
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-        ];
     }
 }
