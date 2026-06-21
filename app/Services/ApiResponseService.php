@@ -9,7 +9,6 @@ class ApiResponseService
 {
     public function success($message = 'Success', $data = [], $code = 200)
     {
-        // If $data is a ResourceCollection (pagination)
         if (
             $data instanceof ResourceCollection &&
             $data->resource instanceof LengthAwarePaginator
@@ -39,7 +38,6 @@ class ApiResponseService
 
     public function successWithAdditional($message = 'Success', $data = [], array $additionalData = [], $code = 200)
     {
-        // If $data is a ResourceCollection (pagination)
         if (
             $data instanceof ResourceCollection &&
             $data->resource instanceof LengthAwarePaginator
@@ -69,11 +67,13 @@ class ApiResponseService
 
     public function error($message = 'Something went wrong', $code = 400, $errors = [])
     {
-        return response()->json([
-            'status' => 'error',
+        $payload = [
+            'status' => false,
             'message' => $message,
-            'errors' => $errors,
-        ], $code);
+            'errors' => empty($errors) ? new \stdClass : $errors,
+        ];
+
+        return response()->json($payload, $code);
     }
 
     public function validationError($errors, $message = 'Validation failed', $code = 422)

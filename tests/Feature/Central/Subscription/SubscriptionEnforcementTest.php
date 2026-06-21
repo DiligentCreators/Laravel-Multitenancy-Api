@@ -62,7 +62,7 @@ it('denies access when tenant has no subscription', function () {
         ->getJson('/api/tenant/v1/dashboard')
         ->assertStatus(402)
         ->assertJson([
-            'status' => 'error',
+            'status' => false,
             'message' => 'No active subscription found. Please subscribe to a plan.',
         ]);
 });
@@ -81,7 +81,7 @@ it('denies access when subscription is expired', function () {
         ->getJson('/api/tenant/v1/dashboard')
         ->assertStatus(402)
         ->assertJson([
-            'status' => 'error',
+            'status' => false,
             'message' => 'Your subscription has expired. Please renew to continue.',
         ]);
 });
@@ -100,7 +100,7 @@ it('denies access when subscription is suspended', function () {
         ->getJson('/api/tenant/v1/dashboard')
         ->assertStatus(403)
         ->assertJson([
-            'status' => 'error',
+            'status' => false,
             'message' => 'Your subscription has been suspended. Please contact support.',
         ]);
 });
@@ -119,7 +119,7 @@ it('denies access when subscription is cancelled', function () {
         ->getJson('/api/tenant/v1/dashboard')
         ->assertStatus(402)
         ->assertJson([
-            'status' => 'error',
+            'status' => false,
             'message' => 'Your subscription has been cancelled. Please subscribe again.',
         ]);
 });

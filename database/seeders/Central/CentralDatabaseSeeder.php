@@ -25,6 +25,14 @@ class CentralDatabaseSeeder extends Seeder
 
             // Sync Roles & Permissions
             RolePermissionSeeder::class,
+
+            // Seed System Settings
+            SystemSettingSeeder::class,
+
+            // Seed Templates
+            EmailTemplateSeeder::class,
+            SmsTemplateSeeder::class,
+            NotificationTemplateSeeder::class,
         ]);
     }
 }
