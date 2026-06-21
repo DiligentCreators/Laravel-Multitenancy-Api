@@ -17,42 +17,20 @@ use Illuminate\Http\Request;
 
 class SubscriptionService
 {
-    private const VALID_TRANSITIONS = [
-        'trial' => ['active', 'expired', 'cancelled'],
-        'active' => ['expired', 'cancelled', 'suspended'],
-        'expired' => ['active'],
-        'cancelled' => ['active'],
-        'suspended' => ['active', 'expired'],
-    ];
-
     public function __construct(
         protected Subscription $subscription,
     ) {}
 
-    private const ALLOWED_SORT_COLUMNS = [
-        'id', 'tenant_id', 'plan_id', 'status', 'starts_at', 'ends_at',
-        'billing_cycle', 'created_at', 'updated_at',
-    ];
-
-    private const ALLOWED_DIRECTIONS = ['asc', 'desc'];
-
     public function query(Request $request): Builder
     {
-        $sort = in_array($request->input('sort', 'created_at'), self::ALLOWED_SORT_COLUMNS, true)
-            ? $request->input('sort', 'created_at')
-            : 'created_at';
-
-        $direction = in_array($request->input('direction', 'desc'), self::ALLOWED_DIRECTIONS, true)
-            ? $request->input('direction', 'desc')
-            : 'desc';
-
         return $this->subscription
             ->query()
             ->when($request->filled('search'), function (Builder $query) use ($request) {
                 $search = $request->string('search')->toString();
 
-                $ids = Subscription::search($search)->keys();
-                $query->whereIn((new Subscription)->getQualifiedKeyName(), $ids);
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('id', 'like', "%{$search}%");
+                });
             })
             ->when(
                 $request->input('trashed') === 'true',
@@ -62,7 +40,10 @@ class SubscriptionService
                 $request->input('trashed') === 'only',
                 fn (Builder $query) => $query->onlyTrashed()
             )
-            ->orderBy($sort, $direction);
+            ->orderBy(
+                $request->input('sort', 'created_at'),
+                $request->input('direction', 'desc')
+            );
     }
 
     public function paginate(Request $request, int $perPage = 15): LengthAwarePaginator
@@ -83,7 +64,6 @@ class SubscriptionService
         return $this->subscription
             ->query()
             ->withTrashed()
-            ->with('tenant', 'plan')
             ->findOrFail($id);
     }
 
@@ -118,25 +98,6 @@ class SubscriptionService
 
     public function update(Subscription $subscription, array $data): Subscription
     {
-        if (isset($data['status'])) {
-            $newStatus = $data['status'];
-            $allowed = self::VALID_TRANSITIONS[$subscription->status->value] ?? [];
-
-            if (! in_array($newStatus, $allowed, true)) {
-                throw new \InvalidArgumentException(
-                    "Cannot transition from {$subscription->status->value} to {$newStatus}."
-                );
-            }
-
-            if ($newStatus === 'cancelled' && ! isset($data['cancelled_at'])) {
-                $data['cancelled_at'] = Carbon::now();
-            }
-
-            if ($newStatus === 'suspended' && ! isset($data['suspended_at'])) {
-                $data['suspended_at'] = Carbon::now();
-            }
-        }
-
         if (isset($data['billing_cycle'], $data['starts_at'])) {
             $startsAt = Carbon::parse($data['starts_at']);
 
@@ -278,7 +239,6 @@ class SubscriptionService
 
         $subscription->update([
             'status' => SubscriptionStatusEnum::CANCELLED,
-            'cancelled_at' => Carbon::now(),
             'ends_at' => $at ?? $subscription->ends_at ?? Carbon::now(),
         ]);
 

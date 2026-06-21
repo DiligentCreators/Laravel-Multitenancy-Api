@@ -1,20 +1,16 @@
 <?php
 
-use App\Http\Middleware\CheckTenantUsage;
 use App\Http\Middleware\EnsureCentralDomain;
-use App\Http\Middleware\EnsureCrmFeature;
 use App\Http\Middleware\EnsureGuardMatches;
 use App\Http\Middleware\EnsurePlanFeature;
 use App\Http\Middleware\EnsureTenantSubscription;
 use App\Http\Middleware\InitializeTenancy;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -41,12 +37,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
             // Plan feature gating — usage: 'feature:users', 'feature:reports'
             'feature' => EnsurePlanFeature::class,
-
-            // CRM feature gate enforcement (crm_feature_definitions)
-            'crm-feature' => EnsureCrmFeature::class,
-
-            // Tenant usage enforcement
-            'usage' => CheckTenantUsage::class,
         ]);
 
         // SPA
@@ -57,26 +47,10 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*'),
         );
 
-        $exceptions->render(function (AuthenticationException $e, Request $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => false,
-                    'message' => $e->getMessage() ?: __('Unauthenticated.'),
-                    'errors' => new stdClass,
-                ], 401);
-            }
-        });
-
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            if ($request->is('api/*')) {
-                $message = $e->getPrevious() instanceof ModelNotFoundException
-                    ? __('Record not found.')
-                    : __('Resource not found.');
-
+            if ($request->is('api/*') && $e->getPrevious() instanceof ModelNotFoundException) {
                 return response()->json([
-                    'status' => false,
-                    'message' => $message,
-                    'errors' => new stdClass,
+                    'message' => __('Record not found.'),
                 ], 404);
             }
         });
@@ -84,29 +58,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'status' => false,
                     'message' => __('Access denied.'),
-                    'errors' => new stdClass,
                 ], 403);
-            }
-        });
-
-        $exceptions->render(function (ValidationException $e, Request $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => false,
-                    'message' => $e->getMessage(),
-                    'errors' => $e->errors(),
-                ], $e->status);
             }
         });
 
         $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
-                    'status' => false,
                     'message' => __('Too many requests. Please try again after a few minutes.'),
-                    'errors' => new stdClass,
                 ], 429);
             }
         });

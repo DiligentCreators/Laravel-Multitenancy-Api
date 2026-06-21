@@ -5,33 +5,33 @@ declare(strict_types=1);
 namespace App\Observers;
 
 use App\Models\Tenant;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 
 class TenantObserver
 {
+    public function creating(Tenant $tenant): void {}
+
+    public function created(Tenant $tenant): void {}
+
+    public function updating(Tenant $tenant): void {}
+
+    public function updated(Tenant $tenant): void {}
+
+    public function saving(Tenant $tenant): void {}
+
+    public function saved(Tenant $tenant): void {}
+
+    public function deleting(Tenant $tenant): void {}
+
+    public function deleted(Tenant $tenant): void {}
+
     public function restoring(Tenant $tenant): void {}
 
-    public function restored(Tenant $tenant): void
-    {
-        $tenant->users()->onlyTrashed()->restore();
-        $tenant->domains()->onlyTrashed()->restore();
-        $tenant->subscriptions()->onlyTrashed()->restore();
-    }
+    public function restored(Tenant $tenant): void {}
+
+    public function forceDeleting(Tenant $tenant): void {}
 
     public function forceDeleted(Tenant $tenant): void
     {
-        DB::table('model_has_roles')
-            ->whereIn('model_id', $tenant->users()->withTrashed()->pluck('id'))
-            ->where('model_type', User::class)
-            ->delete();
-
-        DB::table('model_has_permissions')
-            ->whereIn('model_id', $tenant->users()->withTrashed()->pluck('id'))
-            ->where('model_type', User::class)
-            ->delete();
-
-        $tenant->subscriptions()->onlyTrashed()->forceDelete();
         $tenant->domains()->onlyTrashed()->forceDelete();
         $tenant->users()->onlyTrashed()->forceDelete();
     }

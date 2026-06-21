@@ -13,34 +13,20 @@ use Illuminate\Http\Request;
 
 class PlanService
 {
-    private const ALLOWED_SORT_COLUMNS = [
-        'id', 'name', 'slug', 'monthly_price', 'yearly_price',
-        'trial_days', 'is_active', 'is_featured', 'created_at', 'updated_at',
-    ];
-
-    private const ALLOWED_DIRECTIONS = ['asc', 'desc'];
-
     public function __construct(
         protected Plan $plan,
     ) {}
 
     public function query(Request $request): Builder
     {
-        $sort = in_array($request->input('sort', 'created_at'), self::ALLOWED_SORT_COLUMNS, true)
-            ? $request->input('sort', 'created_at')
-            : 'created_at';
-
-        $direction = in_array($request->input('direction', 'desc'), self::ALLOWED_DIRECTIONS, true)
-            ? $request->input('direction', 'desc')
-            : 'desc';
-
         return $this->plan
             ->query()
             ->when($request->filled('search'), function (Builder $query) use ($request) {
                 $search = $request->string('search')->toString();
 
-                $ids = Plan::search($search)->keys();
-                $query->whereIn((new Plan)->getQualifiedKeyName(), $ids);
+                $query->where(function (Builder $query) use ($search) {
+                    $query->where('id', 'like', "%{$search}%");
+                });
             })
             ->when(
                 $request->input('trashed') === 'true',
@@ -50,7 +36,10 @@ class PlanService
                 $request->input('trashed') === 'only',
                 fn (Builder $query) => $query->onlyTrashed()
             )
-            ->orderBy($sort, $direction);
+            ->orderBy(
+                $request->input('sort', 'created_at'),
+                $request->input('direction', 'desc')
+            );
     }
 
     public function paginate(Request $request, int $perPage = 15): LengthAwarePaginator
@@ -71,7 +60,6 @@ class PlanService
         return $this->plan
             ->query()
             ->withTrashed()
-            ->with('features')
             ->findOrFail($id);
     }
 

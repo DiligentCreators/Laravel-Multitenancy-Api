@@ -10,22 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "barryvdh/laravel-dompdf": "*",
-        "dompdf/dompdf": "*",
-        "laravel/cashier": "*",
         "laravel/framework": "^13.8",
         "laravel/nightwatch": "^1.28",
         "laravel/sanctum": "^4.0",
-        "laravel/scout": "^11.3",
         "laravel/tinker": "^3.0",
-        "owen-it/laravel-auditing": "^14.0",
         "sentry/sentry-laravel": "^4.26",
         "spatie/laravel-activitylog": "^5.0",
-        "spatie/laravel-backup": "^10.3",
-        "spatie/laravel-medialibrary": "^11.23",
         "spatie/laravel-permission": "^8.0",
-        "spatie/laravel-query-builder": "^7.3",
-        "spatie/laravel-settings": "^3.9",
         "stancl/tenancy": "^3.10"
     },
     "require-dev": {

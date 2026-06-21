@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Laravel\Scout\Searchable;
 use Spatie\Permission\Models\Role as ModelsRole;
 
 /**
@@ -10,14 +9,5 @@ use Spatie\Permission\Models\Role as ModelsRole;
  */
 class Role extends ModelsRole
 {
-    use Searchable;
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-        ];
-    }
-
     //
 }

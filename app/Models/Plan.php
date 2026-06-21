@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Crm\PlanFeature as CrmPlanFeature;
 use App\Observers\PlanObserver;
 use App\Policies\PlanPolicy;
 use Database\Factories\Central\PlanFactory;
@@ -14,9 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Scout\Searchable;
 
 #[UseFactory(PlanFactory::class)]
 #[ObservedBy(PlanObserver::class)]
@@ -24,7 +21,7 @@ use Laravel\Scout\Searchable;
 class Plan extends Model
 {
     /** @use HasFactory<PlanFactory> */
-    use HasFactory, Searchable, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -52,11 +49,6 @@ class Plan extends Model
     public function resolveRouteBindingQuery($query, $value, $field = null)
     {
         return parent::resolveRouteBindingQuery($query->withTrashed(), $value, $field);
-    }
-
-    public function crmFeatures(): HasMany
-    {
-        return $this->hasMany(CrmPlanFeature::class, 'plan_id');
     }
 
     public function features(): BelongsToMany
@@ -96,12 +88,5 @@ class Plan extends Model
         $feature = $this->features->firstWhere('slug', $slug);
 
         return $feature?->pivot->getAttribute('value');
-    }
-
-    public function toSearchableArray(): array
-    {
-        return [
-            'id' => $this->id,
-        ];
     }
 }
